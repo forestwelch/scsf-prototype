@@ -242,3 +242,28 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
     { slug }
   );
 }
+
+// Tests Passed
+
+export interface TestPassed {
+  _id: string;
+  skaterName: string;
+  testType: 'moves' | 'freeskate' | 'dance' | 'pairs';
+  testLevel: string;
+  passedDate: string;
+}
+
+/**
+ * Get all tests passed records, ordered by date descending
+ */
+export async function getAllTestsPassed(): Promise<TestPassed[]> {
+  return client.fetch<TestPassed[]>(
+    `*[_type == "testPassed"] | order(passedDate desc) {
+      _id,
+      skaterName,
+      testType,
+      testLevel,
+      passedDate
+    }`
+  );
+}
