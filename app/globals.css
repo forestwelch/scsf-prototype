@@ -21,7 +21,7 @@
 }
 
 html {
-  scroll-padding-top: 5rem; /* offset for sticky header so anchors don't hide under nav */
+  scroll-padding-top: 7rem; /* offset: 4rem header + 3rem jump-nav on pages with double sticky bars */
 }
 
 body {

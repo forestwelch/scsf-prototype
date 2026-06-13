@@ -5,142 +5,183 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Container from './Container';
 
+type NavItem = {
+  name: string;
+  href: string;
+  external?: boolean;
+  children?: { name: string; href: string; external?: boolean }[];
+};
+
+const navigation: NavItem[] = [
+  {
+    name: 'Programs',
+    href: '/programs',
+    children: [
+      { name: 'BSP Policy', href: 'https://scsf.org/bsp-policy/', external: true },
+      { name: 'Coaches Support Policy', href: 'https://scsf.org/scsf-coaches-support-policy/', external: true },
+      { name: 'Officials Support Program', href: 'https://scsf.org/officials-support-program/', external: true },
+      { name: 'Grant Policy & Application', href: 'https://scsf.org/grant-policy/', external: true },
+      { name: 'USFS Scholarships & Grants', href: 'https://scsf.org/usfs-scholarships-grants-and-awards/', external: true },
+      { name: 'Graduating Seniors Program', href: 'https://scsf.org/graduating-seniors-program/', external: true },
+    ],
+  },
+  {
+    name: 'Membership',
+    href: '/membership',
+    children: [
+      { name: 'Join or Renew', href: '/membership#join' },
+      { name: 'Membership Categories', href: '/membership#categories' },
+      { name: 'Volunteer Commitment', href: '/membership#volunteer' },
+      { name: 'Code of Conduct', href: '/membership#conduct' },
+      { name: 'SkateSafe', href: '/membership#skatesafe' },
+      { name: 'Club Jackets', href: '/resources#jackets' },
+      { name: 'Newsletter Archive', href: 'https://scsf.org/the-inside-edge-newsletter-archive/', external: true },
+    ],
+  },
+  {
+    name: 'Competition',
+    href: '/programs#competitions',
+    children: [
+      { name: 'Skate San Francisco', href: '/programs#competitions' },
+      { name: 'EMS Registration', href: 'https://www.usfsaonline.org/', external: true },
+      { name: 'EntryEeze Portal', href: 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189', external: true },
+      { name: 'CCIA Calendar', href: 'https://scsf.org/ccia-calendar/', external: true },
+    ],
+  },
+  {
+    name: 'Tests',
+    href: '/tests-passed',
+    children: [
+      { name: 'Tests Passed', href: '/tests-passed' },
+      { name: 'Test Registration & Schedule', href: '/resources#testing' },
+      { name: 'Testing Policy & Fees', href: 'https://scsf.org/testing-policy/', external: true },
+    ],
+  },
+  {
+    name: 'Teams',
+    href: '/programs#teams',
+    children: [
+      { name: 'San Francisco Ice Theatre', href: '/programs#teams' },
+      { name: 'Tremors Synchronized Skating', href: 'http://tremorssf.org/', external: true },
+    ],
+  },
+  {
+    name: 'About',
+    href: '/about',
+    children: [
+      { name: 'About the Club', href: '/about' },
+      { name: 'Mission', href: '/about#mission' },
+      { name: 'Club History', href: '/about#history' },
+      { name: 'Board & Contacts', href: '/about#board' },
+      { name: 'SCSF Coaches', href: '/resources#coaches' },
+      { name: 'Announcements', href: '/announcements' },
+      { name: 'Events', href: '/events' },
+      { name: 'Contact Us', href: '/contact' },
+    ],
+  },
+];
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const navigation = [
-    {
-      name: 'About',
-      href: '/about',
-      children: [
-        { name: 'About the Club', href: '/about' },
-        { name: 'Board of Directors', href: '/about#board' },
-        { name: 'Announcements', href: '/announcements' },
-        { name: 'Events', href: '/events' },
-        { name: 'Club History', href: '/about#history' },
-      ],
-    },
-    {
-      name: 'Membership',
-      href: '/membership',
-      children: [
-        { name: 'Why Join?', href: '/membership#why-join' },
-        { name: 'Join the Club', href: '/membership#join' },
-        { name: 'Membership Policies', href: '/membership#policies' },
-        { name: 'Code of Conduct', href: '/membership#conduct' },
-      ],
-    },
-    {
-      name: 'Club Resources',
-      href: '#',
-      children: [
-        { name: 'Support Programs', href: '/resources#support' },
-        { name: 'Competition Resources', href: '/resources#competition' },
-        { name: 'Testing', href: '/resources#testing' },
-        { name: 'SCSF Coaches', href: '/resources#coaches' },
-        { name: 'Ice Time', href: '/resources#ice-time' },
-        { name: 'Order Club Jackets', href: '/resources#jackets' },
-      ],
-    },
-    {
-      name: 'Programs',
-      href: '#',
-      children: [
-        { name: 'Teams', href: '/programs#teams' },
-        { name: 'Tests', href: '/programs#tests' },
-        { name: 'Competitions', href: '/programs#competitions' },
-      ],
-    },
-    {
-      name: 'FAQs',
-      href: '/faqs',
-    },
-  ];
+  const toggleDropdown = (name: string) => {
+    setOpenDropdown(prev => (prev === name ? null : name));
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-brand-royal-blue text-white shadow-md">
       <Container>
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="relative w-12 h-12 flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-3 shrink-0">
+            <div className="relative w-10 h-10 flex items-center justify-center">
               <Image
                 src="/images/logo.png"
                 alt="SCSF Logo"
-                width={48}
-                height={48}
+                width={40}
+                height={40}
                 className="object-contain"
                 onError={(e) => {
-                  // Fallback if logo doesn't exist - hide image, show text
-                  const target = e.currentTarget as HTMLImageElement;
-                  target.style.display = 'none';
-                  const parent = target.parentElement;
-                  if (parent) {
-                    parent.innerHTML = '<span class="text-2xl font-bold">SCSF</span>';
-                  }
+                  const t = e.currentTarget as HTMLImageElement;
+                  t.style.display = 'none';
+                  const p = t.parentElement;
+                  if (p) p.innerHTML = '<span class="text-xl font-bold">SCSF</span>';
                 }}
               />
             </div>
-            <span className="text-xl font-bold hidden sm:block">
-              SCSF
+            <span className="font-bold text-lg hidden sm:block leading-tight">
+              Skating Club of<br />
+              <span className="text-brand-golden-yellow">San Francisco</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navigation.map((item) => (
               <div key={item.name} className="relative group">
-                <Link
-                  href={item.href}
-                  className="px-4 py-2 rounded-md hover:bg-brand-bridge-orange transition-colors"
-                >
-                  {item.name}
-                </Link>
-                {item.children && (
-                  <div className="absolute left-0 mt-1 w-56 bg-white text-brand-charcoal rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <div className="py-2">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          href={child.href}
-                          className="block px-4 py-2 hover:bg-brand-off-white hover:text-brand-bridge-orange transition-colors"
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
+                {item.children ? (
+                  <>
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-1 px-3 py-2 rounded-md hover:bg-white/10 transition-colors text-sm font-medium"
+                    >
+                      {item.name}
+                      <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </Link>
+                    <div className="absolute left-0 top-full mt-0.5 w-56 bg-white text-brand-charcoal rounded-md shadow-lg
+                                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+                      <div className="py-1.5">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.name}
+                            href={child.href}
+                            target={child.external ? '_blank' : undefined}
+                            rel={child.external ? 'noopener noreferrer' : undefined}
+                            className="flex items-center justify-between px-4 py-2 text-sm hover:bg-brand-off-white hover:text-brand-royal-blue transition-colors"
+                          >
+                            {child.name}
+                            {child.external && (
+                              <svg className="w-3 h-3 text-gray-400 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className="px-3 py-2 rounded-md hover:bg-white/10 transition-colors text-sm font-medium"
+                  >
+                    {item.name}
+                  </Link>
                 )}
               </div>
             ))}
+            <Link
+              href="/contact"
+              className="ml-2 px-4 py-2 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm hover:bg-yellow-400 transition-colors"
+            >
+              Contact
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-md hover:bg-brand-bridge-orange transition-colors"
+            className="lg:hidden p-2 rounded-md hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
@@ -148,33 +189,61 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-brand-sky-blue">
-            <nav className="flex flex-col space-y-2">
+          <div className="lg:hidden border-t border-white/20 py-3">
+            <nav className="flex flex-col">
               {navigation.map((item) => (
                 <div key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="block px-4 py-2 rounded-md hover:bg-brand-bridge-orange transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                  {item.children && (
-                    <div className="pl-6 mt-1 space-y-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          href={child.href}
-                          className="block px-4 py-2 rounded-md hover:bg-brand-bridge-orange/50 transition-colors text-sm"
-                          onClick={() => setMobileMenuOpen(false)}
+                  {item.children ? (
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(item.name)}
+                        className="w-full flex items-center justify-between px-4 py-2.5 rounded-md hover:bg-white/10 transition-colors text-left text-sm font-medium"
+                      >
+                        {item.name}
+                        <svg
+                          className={`w-4 h-4 transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          {child.name}
-                        </Link>
-                      ))}
-                    </div>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {openDropdown === item.name && (
+                        <div className="pl-4 pb-1">
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.name}
+                              href={child.href}
+                              target={child.external ? '_blank' : undefined}
+                              rel={child.external ? 'noopener noreferrer' : undefined}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-4 py-2.5 rounded-md hover:bg-white/10 transition-colors text-sm font-medium"
+                    >
+                      {item.name}
+                    </Link>
                   )}
                 </div>
               ))}
+              <Link
+                href="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mx-4 mt-2 px-4 py-2.5 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm text-center hover:bg-yellow-400 transition-colors"
+              >
+                Contact Us
+              </Link>
             </nav>
           </div>
         )}

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Container from '@/components/Container';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import EventCard from '@/components/EventCard';
+import HeroCarousel from '@/components/HeroCarousel';
 import { getLatestAnnouncements, getFeaturedEvents } from '@/lib/sanity.queries';
 
 export default async function Home() {
@@ -10,34 +11,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-brand-sky-blue to-brand-royal-blue text-white py-24 md:py-32">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <Container className="relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Welcome to the Skating Club of San Francisco
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
-              Supporting figure skaters of all levels since 1938. Join our community of skaters, coaches, and families.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/membership"
-                className="bg-brand-golden-yellow text-brand-charcoal px-8 py-4 rounded-md font-semibold text-lg hover:bg-yellow-500 transition-colors text-center"
-              >
-                Join the Club
-              </Link>
-              <Link
-                href="/about"
-                className="border-2 border-white text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-white hover:text-brand-royal-blue transition-colors text-center"
-              >
-                Learn More
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Latest Announcements Section */}
       <section className="py-16 md:py-24 bg-brand-off-white">
