@@ -170,27 +170,41 @@ export default function Header() {
             ))}
             <Link
               href="/contact"
-              className="ml-2 px-4 py-2 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm hover:bg-yellow-400 transition-colors"
+              className="px-3 py-2 rounded-md hover:bg-white/10 transition-colors text-sm font-medium"
             >
               Contact
             </Link>
+            <Link
+              href="/donate"
+              className="ml-1 px-4 py-2 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm hover:bg-yellow-400 transition-colors"
+            >
+              Donate
+            </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-md hover:bg-white/10 transition-colors"
-            aria-label="Toggle menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
+          {/* Mobile: Donate + Hamburger */}
+          <div className="lg:hidden flex items-center gap-2">
+            <Link
+              href="/donate"
+              className="px-3 py-1.5 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm hover:bg-yellow-400 transition-colors"
+            >
+              Donate
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md hover:bg-white/10 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>{/* end flex h-16 */}
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
@@ -245,9 +259,16 @@ export default function Header() {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mx-4 mt-2 px-4 py-2.5 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm text-center hover:bg-yellow-400 transition-colors"
+                className="block px-4 py-2.5 rounded-md hover:bg-white/10 transition-colors text-sm font-medium"
               >
                 Contact Us
+              </Link>
+              <Link
+                href="/donate"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mx-4 mt-2 px-4 py-2.5 bg-brand-golden-yellow text-brand-charcoal rounded-md font-semibold text-sm text-center hover:bg-yellow-400 transition-colors"
+              >
+                Donate
               </Link>
             </nav>
           </div>

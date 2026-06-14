@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import Container from '@/components/Container';
 import { getAllAnnouncements } from '@/lib/sanity.queries';
+import AnnouncementsList from './AnnouncementsList';
 
 export const metadata = {
   title: 'Announcements | Skating Club of San Francisco',
@@ -12,7 +12,6 @@ export default async function AnnouncementsPage() {
 
   return (
     <div className="min-h-screen bg-brand-off-white">
-      {/* Page Header */}
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Announcements</h1>
@@ -20,47 +19,13 @@ export default async function AnnouncementsPage() {
             Stay up to date with the latest news from the Skating Club of San Francisco.
           </p>
           {announcements.length > 0 && (
-            <p className="text-white/60 text-sm mt-3">
-              {announcements.length} posts
-            </p>
+            <p className="text-white/60 text-sm mt-3">{announcements.length} posts</p>
           )}
         </Container>
       </div>
 
       <Container className="py-12 md:py-16">
-        {announcements.length > 0 ? (
-          <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-100">
-            {announcements.map((announcement) => {
-              const date = announcement.publishedAt
-                ? new Date(announcement.publishedAt).toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'short', day: 'numeric',
-                  })
-                : '';
-              return (
-                <Link
-                  key={announcement._id}
-                  href={`/announcements/${announcement.slug.current}`}
-                  className="flex items-center justify-between px-6 py-4 hover:bg-brand-off-white transition-colors group"
-                >
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="font-semibold text-brand-charcoal group-hover:text-brand-royal-blue truncate">
-                      {announcement.title}
-                    </h3>
-                    {announcement.excerpt && (
-                      <p className="text-sm text-gray-500 truncate mt-0.5">{announcement.excerpt}</p>
-                    )}
-                  </div>
-                  <span className="text-sm text-gray-400 whitespace-nowrap shrink-0">{date}</span>
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg p-12 text-center">
-            <p className="text-gray-600 text-lg mb-2">No announcements yet.</p>
-            <p className="text-gray-500 text-sm">Check back soon for updates!</p>
-          </div>
-        )}
+        <AnnouncementsList announcements={announcements} />
       </Container>
     </div>
   );
