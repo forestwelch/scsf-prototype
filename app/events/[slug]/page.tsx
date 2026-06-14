@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Container from '@/components/Container';
-import { PortableText } from '@/components/PortableText';
+import PortableText from '@/components/PortableText';
 import { getEventBySlug, getAllEvents } from '@/lib/sanity.queries';
 import Link from 'next/link';
 
