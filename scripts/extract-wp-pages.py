@@ -37,8 +37,29 @@ def get(el, tag):
     found = el.find(tag, NS)
     return found.text if found is not None else None
 
+def strip_divi(content):
+    """Extract readable text from Divi/WPBakery shortcode soup.
+    Pulls text out of [et_pb_text] blocks, strips everything else."""
+    if not content: return content
+    if '[et_pb_' not in content and '[vc_' not in content:
+        return content
+    # Extract text from et_pb_text blocks first
+    text_blocks = re.findall(r'\[et_pb_text[^\]]*\](.*?)\[/et_pb_text\]',
+                             content, re.DOTALL | re.I)
+    if text_blocks:
+        content = '\n\n'.join(text_blocks)
+    # Strip remaining shortcode blocks with inner content
+    content = re.sub(r'\[et_pb_\w+[^\]]*\].*?\[/et_pb_\w+\]', '', content,
+                     flags=re.DOTALL | re.I)
+    content = re.sub(r'\[vc_\w+[^\]]*\].*?\[/vc_\w+\]', '', content,
+                     flags=re.DOTALL | re.I)
+    # Strip remaining self-closing shortcode tags
+    content = re.sub(r'\[[^\]]+\]', '', content)
+    return content.strip()
+
 def strip_html(html):
     if not html: return ''
+    html = strip_divi(html)
     html = re.sub(r'</p>', '\n\n', html, flags=re.I)
     html = re.sub(r'</h[1-6]>', '\n\n', html, flags=re.I)
     html = re.sub(r'<br\s*/?>', '\n', html, flags=re.I)

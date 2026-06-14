@@ -75,7 +75,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
             <div className="flex space-x-4 mb-6">
               <a
-                href="https://www.facebook.com/skatingclubofsf"
+                href="https://www.facebook.com/scsf.org/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-brand-golden-yellow hover:text-white transition-colors"
@@ -86,7 +86,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://www.instagram.com/scsf_skating"
+                href="https://www.instagram.com/explore/tags/skatingclubofsanfrancisco/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-brand-golden-yellow hover:text-white transition-colors"
