@@ -29,24 +29,24 @@ def get(el, tag):
     return found.text if found is not None else None
 
 def strip_divi(content):
-    """Extract readable text from Divi/WPBakery shortcode soup.
-    Pulls text out of [et_pb_text] blocks, strips everything else."""
+    """Extract readable text from Divi/WPBakery shortcode soup."""
     if not content: return content
-    # If no Divi shortcodes, return as-is
-    if '[et_pb_' not in content and '[vc_' not in content:
+    has_divi = '[et_pb_' in content or '[/et_pb_' in content
+    has_vc   = '[vc_'   in content or '[/vc_'   in content
+    if not has_divi and not has_vc:
         return content
-    # Extract text content from et_pb_text blocks
+    # Extract text from et_pb_text blocks
     text_blocks = re.findall(r'\[et_pb_text[^\]]*\](.*?)\[/et_pb_text\]',
                              content, re.DOTALL | re.I)
     if text_blocks:
         content = '\n\n'.join(text_blocks)
-    # Strip all remaining shortcode blocks with content: [tag ...]...[/tag]
+    # Strip remaining paired shortcode blocks
     content = re.sub(r'\[et_pb_\w+[^\]]*\].*?\[/et_pb_\w+\]', '', content,
                      flags=re.DOTALL | re.I)
     content = re.sub(r'\[vc_\w+[^\]]*\].*?\[/vc_\w+\]', '', content,
                      flags=re.DOTALL | re.I)
-    # Strip remaining self-closing shortcode tags
-    content = re.sub(r'\[[^\]]+\]', '', content)
+    # Strip ALL remaining shortcode tags — both opening [tag] and closing [/tag]
+    content = re.sub(r'\[/?[^\]\[]+\]', '', content)
     return content.strip()
 
 def strip_html(html):
