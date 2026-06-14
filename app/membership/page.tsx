@@ -195,14 +195,12 @@ export default function MembershipPage() {
             >
               Renew on EntryEeze
             </a>
-            <a
-              href="https://scsf.org/the-inside-edge-newsletter-archive/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/the-inside-edge-newsletter-archive"
               className="inline-block border-2 border-brand-royal-blue text-brand-royal-blue px-6 py-3 rounded-md font-semibold hover:bg-brand-royal-blue hover:text-white transition-colors"
             >
               Newsletter Archive
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -254,10 +252,10 @@ export default function MembershipPage() {
               SCSF is entirely volunteer-run. All members are expected to contribute time to club activities —
               test sessions, competitions, the Annual Gala, and more.
             </p>
-            <a href="https://scsf.org/volunteer-commitment/" target="_blank" rel="noopener noreferrer"
+            <Link href="/volunteer-commitment"
               className="text-brand-bridge-orange hover:underline font-medium text-sm">
               Full policy →
-            </a>
+            </Link>
           </div>
           <div id="conduct" className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-bold text-brand-charcoal mb-3">Code of Conduct</h2>
@@ -265,10 +263,10 @@ export default function MembershipPage() {
               All SCSF members must abide by the Club's Code of Conduct, upholding respectful behavior on and off the
               ice for skaters, coaches, parents, and officials.
             </p>
-            <a href="https://scsf.org/code-of-conduct/" target="_blank" rel="noopener noreferrer"
+            <Link href="/code-of-conduct"
               className="text-brand-bridge-orange hover:underline font-medium text-sm">
               View Code of Conduct →
-            </a>
+            </Link>
           </div>
           <div id="skatesafe" className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-bold text-brand-charcoal mb-3">SkateSafe / SafeSport</h2>
@@ -276,10 +274,10 @@ export default function MembershipPage() {
               SCSF supports US Figure Skating's SkateSafe program to ensure all members have a safe skating
               environment, in compliance with the US Olympic Committee.
             </p>
-            <a href="https://scsf.org/skatesafe-statement/" target="_blank" rel="noopener noreferrer"
+            <Link href="/skatesafe-statement"
               className="text-brand-bridge-orange hover:underline font-medium text-sm">
               SkateSafe Statement →
-            </a>
+            </Link>
           </div>
         </section>
 

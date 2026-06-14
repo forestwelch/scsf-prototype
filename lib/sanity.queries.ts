@@ -243,6 +243,19 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
   );
 }
 
+/**
+ * Get all pages (for generateStaticParams)
+ */
+export async function getAllPages(): Promise<Page[]> {
+  return client.fetch<Page[]>(
+    `*[_type == "page" && defined(slug.current)] | order(title asc) {
+      _id,
+      title,
+      slug
+    }`
+  );
+}
+
 // Tests Passed
 
 export interface TestPassed {

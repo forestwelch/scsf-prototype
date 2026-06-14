@@ -17,12 +17,12 @@ const navigation: NavItem[] = [
     name: 'Programs',
     href: '/programs',
     children: [
-      { name: 'BSP Policy', href: 'https://scsf.org/bsp-policy/', external: true },
-      { name: 'Coaches Support Policy', href: 'https://scsf.org/scsf-coaches-support-policy/', external: true },
-      { name: 'Officials Support Program', href: 'https://scsf.org/officials-support-program/', external: true },
-      { name: 'Grant Policy & Application', href: 'https://scsf.org/grant-policy/', external: true },
-      { name: 'USFS Scholarships & Grants', href: 'https://scsf.org/usfs-scholarships-grants-and-awards/', external: true },
-      { name: 'Graduating Seniors Program', href: 'https://scsf.org/graduating-seniors-program/', external: true },
+      { name: 'BSP Policy', href: '/bsp-policy' },
+      { name: 'Coaches Support Policy', href: '/scsf-coaches-support-policy' },
+      { name: 'Officials Support Program', href: '/officials-support-program' },
+      { name: 'Grant Policy & Application', href: '/grant-policy' },
+      { name: 'USFS Scholarships & Grants', href: '/usfs-scholarships-grants-and-awards' },
+      { name: 'Graduating Seniors Program', href: '/graduating-seniors-program' },
     ],
   },
   {
@@ -35,7 +35,7 @@ const navigation: NavItem[] = [
       { name: 'Code of Conduct', href: '/membership#conduct' },
       { name: 'SkateSafe', href: '/membership#skatesafe' },
       { name: 'Club Jackets', href: '/resources#jackets' },
-      { name: 'Newsletter Archive', href: 'https://scsf.org/the-inside-edge-newsletter-archive/', external: true },
+      { name: 'Newsletter Archive', href: '/the-inside-edge-newsletter-archive' },
     ],
   },
   {
@@ -45,7 +45,7 @@ const navigation: NavItem[] = [
       { name: 'Skate San Francisco', href: '/programs#competitions' },
       { name: 'EMS Registration', href: 'https://www.usfsaonline.org/', external: true },
       { name: 'EntryEeze Portal', href: 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189', external: true },
-      { name: 'CCIA Calendar', href: 'https://scsf.org/ccia-calendar/', external: true },
+      { name: 'CCIA Calendar', href: '/ccia-calendar' },
     ],
   },
   {
@@ -54,7 +54,7 @@ const navigation: NavItem[] = [
     children: [
       { name: 'Tests Passed', href: '/tests-passed' },
       { name: 'Test Registration & Schedule', href: '/resources#testing' },
-      { name: 'Testing Policy & Fees', href: 'https://scsf.org/testing-policy/', external: true },
+      { name: 'Testing Policy & Fees', href: '/testing-policy' },
     ],
   },
   {
