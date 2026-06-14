@@ -1,4 +1,5 @@
 // ADD THIS TO lib/sanity.queries.ts
+import { client } from '@/sanity/lib/client';
 
 // --- new interface ---
 export interface TestPassed {
