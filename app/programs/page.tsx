@@ -1,12 +1,16 @@
 import Container from '@/components/Container';
 import Link from 'next/link';
+import { getSiteSettings } from '@/lib/sanity.queries';
 
 export const metadata = {
   title: 'Programs | Skating Club of San Francisco',
   description: 'SCSF programs including Ice Theatre, Tremors performance team, skating tests, and competitions.',
 };
 
-export default function ProgramsPage() {
+export default async function ProgramsPage() {
+  const settings = await getSiteSettings();
+  const entryEezeUrl = settings.entryEezeUrl ?? 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189';
+  const emsUrl = settings.emsUrl ?? 'https://www.usfigureskating.org/ems';
   return (
     <div className="min-h-screen bg-brand-off-white">
       {/* Page Header */}
@@ -206,7 +210,7 @@ export default function ProgramsPage() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <a
-                href="https://entryeeze.com"
+                href={entryEezeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-brand-bridge-orange hover:underline"

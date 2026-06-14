@@ -1,5 +1,5 @@
 import Container from '@/components/Container';
-import { getAllCoaches } from '@/lib/sanity.queries';
+import { getAllCoaches, getSiteSettings } from '@/lib/sanity.queries';
 import Image from 'next/image';
 import { urlFor } from '@/lib/sanity.image';
 import Link from 'next/link';
@@ -10,7 +10,14 @@ export const metadata = {
 };
 
 export default async function ResourcesPage() {
-  const coaches = await getAllCoaches();
+  const [coaches, settings] = await Promise.all([getAllCoaches(), getSiteSettings()]);
+
+  const venue   = settings.venueName        ?? 'Yerba Buena Ice Skating & Bowling Center';
+  const vStreet = settings.venueStreet      ?? '750 Folsom St.';
+  const vCity   = settings.venueCityStateZip ?? 'San Francisco, CA 94107';
+  const vPhone  = settings.venuePhone       ?? '(415) 820-3521';
+  const entryEezeUrl = settings.entryEezeUrl ?? 'https://entryeeze.com';
+  const emsUrl  = settings.emsUrl           ?? 'https://www.usfigureskating.org/ems';
 
   return (
     <div className="min-h-screen bg-brand-off-white">
@@ -91,7 +98,7 @@ export default async function ResourcesPage() {
                 <ul className="space-y-3">
                   <li>
                     <a
-                      href="https://entryeeze.com"
+                      href={entryEezeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-brand-bridge-orange hover:underline font-medium"
@@ -105,7 +112,7 @@ export default async function ResourcesPage() {
                   </li>
                   <li>
                     <a
-                      href="https://www.usfigureskating.org/ems"
+                      href={emsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-brand-bridge-orange hover:underline font-medium"
@@ -255,8 +262,16 @@ export default async function ResourcesPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm p-10 text-center text-gray-500">
-              Coach directory is being updated. Check back soon.
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <p className="text-gray-600 mb-4">
+                View the full coach directory, including contact information and specialties.
+              </p>
+              <Link
+                href="/scsf-coaches"
+                className="inline-block bg-brand-royal-blue text-white px-5 py-2.5 rounded-md font-semibold hover:bg-brand-sky-blue transition-colors"
+              >
+                SCSF Coaches Directory →
+              </Link>
             </div>
           )}
         </section>
@@ -267,18 +282,18 @@ export default async function ResourcesPage() {
           <div className="bg-white rounded-lg shadow-sm p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-semibold text-brand-charcoal mb-3">Yerba Buena Ice Center</h3>
+                <h3 className="text-xl font-semibold text-brand-charcoal mb-3">{venue}</h3>
                 <address className="not-italic text-gray-600 space-y-1">
-                  <p>750 Folsom St.</p>
-                  <p>San Francisco, CA 94107</p>
+                  <p>{vStreet}</p>
+                  <p>{vCity}</p>
                   <p className="mt-2">
-                    <a href="tel:4158203521" className="text-brand-bridge-orange hover:underline">
-                      (415) 820-3521
+                    <a href={`tel:${vPhone.replace(/\D/g,'')}`} className="text-brand-bridge-orange hover:underline">
+                      {vPhone}
                     </a>
                   </p>
                 </address>
                 <a
-                  href="https://maps.google.com/?q=750+Folsom+St,+San+Francisco,+CA+94107"
+                  href={`https://maps.google.com/?q=${encodeURIComponent(`${vStreet}, ${vCity}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 mt-4 text-brand-bridge-orange hover:underline font-medium text-sm"

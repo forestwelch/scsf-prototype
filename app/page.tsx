@@ -3,16 +3,19 @@ import Container from '@/components/Container';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import EventCard from '@/components/EventCard';
 import HeroCarousel from '@/components/HeroCarousel';
-import { getLatestAnnouncements, getFeaturedEvents } from '@/lib/sanity.queries';
+import { getLatestAnnouncements, getFeaturedEvents, getHeroSlides } from '@/lib/sanity.queries';
 
 export default async function Home() {
-  const announcements = await getLatestAnnouncements();
-  const events = await getFeaturedEvents();
+  const [announcements, events, slides] = await Promise.all([
+    getLatestAnnouncements(),
+    getFeaturedEvents(),
+    getHeroSlides(),
+  ]);
 
   return (
     <div className="flex flex-col">
       {/* Hero Carousel */}
-      <HeroCarousel />
+      <HeroCarousel slides={slides} />
 
       {/* Latest Announcements Section */}
       <section className="py-16 md:py-24 bg-brand-off-white">

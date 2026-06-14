@@ -14,6 +14,10 @@ type NavItem = {
 
 const navigation: NavItem[] = [
   {
+    name: 'News',
+    href: '/announcements',
+  },
+  {
     name: 'Programs',
     href: '/programs',
     children: [
@@ -79,7 +83,6 @@ const navigation: NavItem[] = [
       { name: 'Junior Council', href: '/junior-council' },
       { name: 'Club Bylaws', href: '/club-bylaws' },
       { name: 'Community Partners', href: '/individual-community-partners' },
-      { name: 'Announcements', href: '/announcements' },
       { name: 'Events', href: '/events' },
       { name: 'Contact Us', href: '/contact' },
     ],

@@ -1,6 +1,90 @@
 import { client } from '@/sanity/lib/client';
 
-// TypeScript interfaces for Sanity content types
+// ─── Site Settings (singleton) ───────────────────────────────────────────────
+
+export interface SiteSettings {
+  orgName?: string;
+  poBox?: string;
+  mailingCityStateZip?: string;
+  venueName?: string;
+  venueStreet?: string;
+  venueCityStateZip?: string;
+  venuePhone?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  zeffyDonateUrl?: string;
+  zeffyNewsletterUrl?: string;
+  mailchimpArchiveUrl?: string;
+  currentNewsletterUrl?: string;
+  currentNewsletterLabel?: string;
+  entryEezeUrl?: string;
+  emsUrl?: string;
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const result = await client.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]`);
+  return result ?? {};
+}
+
+// ─── Hero Slides ─────────────────────────────────────────────────────────────
+
+export interface HeroSlide {
+  _id: string;
+  headline: string;
+  subtitle?: string;
+  category?: string;
+  imageUrl: string;
+  imageAlt?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+export async function getHeroSlides(): Promise<HeroSlide[]> {
+  return client.fetch<HeroSlide[]>(
+    `*[_type == "heroSlide" && active == true] | order(order asc) {
+      _id, headline, subtitle, category, imageUrl, imageAlt, ctaLabel, ctaHref
+    }`
+  );
+}
+
+// ─── FAQs ─────────────────────────────────────────────────────────────────────
+
+export interface Faq {
+  _id: string;
+  question: string;
+  answer: string;
+  category: string;
+  order: number;
+}
+
+export async function getAllFaqs(): Promise<Faq[]> {
+  return client.fetch<Faq[]>(
+    `*[_type == "faq"] | order(category asc, order asc) {
+      _id, question, answer, category, order
+    }`
+  );
+}
+
+// ─── Membership Categories ───────────────────────────────────────────────────
+
+export interface MembershipCategory {
+  _id: string;
+  name: string;
+  price: string;
+  ageGroup?: string;
+  highlight?: boolean;
+  features?: string[];
+}
+
+export async function getAllMembershipCategories(): Promise<MembershipCategory[]> {
+  return client.fetch<MembershipCategory[]>(
+    `*[_type == "membershipCategory"] | order(order asc) {
+      _id, name, price, ageGroup, highlight, features
+    }`
+  );
+}
+
+// ─── TypeScript interfaces for Sanity content types ──────────────────────────
 export interface SanityImage {
   _type: 'image';
   asset: {

@@ -14,11 +14,46 @@ type Announcement = {
 function formatDate(dateStr?: string) {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric',
+    month: 'short', day: 'numeric',
   });
 }
 
-const FEATURED_COUNT = 3;
+function getYear(dateStr?: string) {
+  if (!dateStr) return 'Undated';
+  return String(new Date(dateStr).getFullYear());
+}
+
+function groupByYear(items: Announcement[]) {
+  const map = new Map<string, Announcement[]>();
+  for (const a of items) {
+    const yr = getYear(a.publishedAt);
+    if (!map.has(yr)) map.set(yr, []);
+    map.get(yr)!.push(a);
+  }
+  // years descending
+  return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+}
+
+function PostRow({ a }: { a: Announcement }) {
+  return (
+    <Link
+      href={`/announcements/${a.slug.current}`}
+      className="flex items-center justify-between px-6 py-4 hover:bg-brand-off-white transition-colors group"
+    >
+      <div className="flex-1 min-w-0 pr-4">
+        <h3 className="font-semibold text-brand-charcoal group-hover:text-brand-royal-blue truncate">
+          {a.title}
+        </h3>
+        {a.excerpt && (
+          <p className="text-sm text-gray-500 truncate mt-0.5">{a.excerpt}</p>
+        )}
+      </div>
+      <span className="text-sm text-gray-400 whitespace-nowrap shrink-0">
+        {formatDate(a.publishedAt)}
+      </span>
+    </Link>
+  );
+}
 
 export default function AnnouncementsList({ announcements }: { announcements: Announcement[] }) {
   const [query, setQuery] = useState('');
@@ -32,8 +67,7 @@ export default function AnnouncementsList({ announcements }: { announcements: An
       )
     : announcements;
 
-  const featured = !q ? filtered.slice(0, FEATURED_COUNT) : [];
-  const rest = !q ? filtered.slice(FEATURED_COUNT) : filtered;
+  const grouped = groupByYear(filtered);
 
   return (
     <>
@@ -78,72 +112,24 @@ export default function AnnouncementsList({ announcements }: { announcements: An
           <p className="text-gray-600 text-lg mb-2">No announcements yet.</p>
           <p className="text-gray-500 text-sm">Check back soon for updates!</p>
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="bg-white rounded-lg p-12 text-center">
+          <p className="text-gray-500">No announcements match &ldquo;{query}&rdquo;.</p>
+          <button onClick={() => setQuery('')} className="mt-3 text-sm text-brand-royal-blue hover:underline">
+            Clear search
+          </button>
+        </div>
       ) : (
-        <>
-          {/* Featured cards — only shown when not searching */}
-          {featured.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-              {featured.map((a) => (
-                <Link
-                  key={a._id}
-                  href={`/announcements/${a.slug.current}`}
-                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md hover:ring-1 hover:ring-brand-royal-blue transition-all group flex flex-col"
-                >
-                  <p className="text-xs text-gray-400 mb-2">{formatDate(a.publishedAt)}</p>
-                  <h3 className="font-bold text-brand-charcoal group-hover:text-brand-royal-blue leading-snug mb-2">
-                    {a.title}
-                  </h3>
-                  {a.excerpt && (
-                    <p className="text-sm text-gray-500 line-clamp-3 flex-1">{a.excerpt}</p>
-                  )}
-                  <span className="mt-4 text-xs font-semibold text-brand-royal-blue group-hover:underline">
-                    Read more →
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* All posts list */}
-          {rest.length > 0 && (
-            <>
-              <h2 className="text-lg font-bold text-brand-charcoal mb-3">
-                {q ? 'Results' : 'All Posts'}
-              </h2>
+        <div className="space-y-8">
+          {grouped.map(([year, posts]) => (
+            <div key={year}>
+              <h2 className="text-lg font-bold text-brand-charcoal mb-3">{year}</h2>
               <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-100">
-                {rest.map((a) => (
-                  <Link
-                    key={a._id}
-                    href={`/announcements/${a.slug.current}`}
-                    className="flex items-center justify-between px-6 py-4 hover:bg-brand-off-white transition-colors group"
-                  >
-                    <div className="flex-1 min-w-0 pr-4">
-                      <h3 className="font-semibold text-brand-charcoal group-hover:text-brand-royal-blue truncate">
-                        {a.title}
-                      </h3>
-                      {a.excerpt && (
-                        <p className="text-sm text-gray-500 truncate mt-0.5">{a.excerpt}</p>
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-400 whitespace-nowrap shrink-0">
-                      {formatDate(a.publishedAt)}
-                    </span>
-                  </Link>
-                ))}
+                {posts.map((a) => <PostRow key={a._id} a={a} />)}
               </div>
-            </>
-          )}
-
-          {/* Edge case: search matches only the first 3 featured posts */}
-          {q && filtered.length === 0 && (
-            <div className="bg-white rounded-lg p-12 text-center">
-              <p className="text-gray-500">No announcements match &ldquo;{query}&rdquo;.</p>
-              <button onClick={() => setQuery('')} className="mt-3 text-sm text-brand-royal-blue hover:underline">
-                Clear search
-              </button>
             </div>
-          )}
-        </>
+          ))}
+        </div>
       )}
     </>
   );

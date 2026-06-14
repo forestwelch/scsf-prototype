@@ -14,6 +14,12 @@ const nextConfig = {
         port: '',
         pathname: '/wp-content/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'gvxwlqyeqlq01lkb.public.blob.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
