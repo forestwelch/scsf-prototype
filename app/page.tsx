@@ -144,7 +144,7 @@ export default async function Home() {
             </Link>
 
             <Link
-              href="/support"
+              href="/donate"
               className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center group"
             >
               <div className="w-16 h-16 bg-brand-golden-yellow rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">

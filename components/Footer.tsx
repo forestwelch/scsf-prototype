@@ -37,7 +37,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/support"
+                  href="/donate"
                   className="text-brand-golden-yellow hover:text-white hover:underline transition-colors"
                 >
                   Support/Donate
@@ -53,7 +53,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="text-brand-golden-yellow hover:text-white hover:underline transition-colors"
                 >
                   Privacy Policy
