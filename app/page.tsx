@@ -42,30 +42,21 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Upcoming Events Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <Container>
-          <h2 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-8">
-            Upcoming Events
-          </h2>
-          {events.length > 0 ? (
+      {/* Upcoming Events Section — only shown when events exist */}
+      {events.length > 0 && (
+        <section className="py-16 md:py-24 bg-white">
+          <Container>
+            <h2 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-8">
+              Upcoming Events
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {events.slice(0, 2).map((event) => (
                 <EventCard key={event._id} event={event} />
               ))}
             </div>
-          ) : (
-            <div className="bg-brand-off-white rounded-lg p-12 text-center">
-              <p className="text-gray-600 text-lg mb-4">
-                No upcoming events scheduled at this time.
-              </p>
-              <p className="text-gray-500">
-                Check back soon for exciting events and competitions!
-              </p>
-            </div>
-          )}
-        </Container>
-      </section>
+          </Container>
+        </section>
+      )}
 
       {/* Quick Links Section */}
       <section className="py-16 md:py-24 bg-brand-sky-blue/10">

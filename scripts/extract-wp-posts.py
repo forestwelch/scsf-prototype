@@ -124,19 +124,31 @@ print(f'After dedup: {len(posts)} unique posts', file=sys.stderr)
 SKIP_SLUGS = {'test'}
 
 for post in posts:
-    slug = get(post, 'wp:post_name') or ''
+    slug   = get(post, 'wp:post_name') or ''
+    status = get(post, 'wp:status') or ''
+    title_el = post.find('title')
+    title_raw = (title_el.text or '').strip() if title_el is not None else ''
+
+    # Skip junk slugs
     if slug in SKIP_SLUGS:
+        continue
+    # Skip drafts with no slug and no title (blank placeholder posts)
+    if status == 'draft' and not slug and not title_raw:
         continue
     post_id     = get(post, 'wp:post_id') or '0'
     title_el    = post.find('title')
     title       = clean(title_el.text if title_el is not None else 'Untitled')
     slug        = get(post, 'wp:post_name') or slugify(title) or f'post-{post_id}'
+    status      = get(post, 'wp:status') or 'publish'
     date_str    = get(post, 'wp:post_date') or '2017-01-01 00:00:00'
     content_raw = get(post, 'content:encoded') or ''
     excerpt_raw = get(post, 'excerpt:encoded') or ''
 
     excerpt_text = strip_html(excerpt_raw)[:200] or strip_html(content_raw)[:200]
     published_at = parse_date(date_str)
+
+    # WP 'archive' + 'draft' status → archived:true in Sanity (hidden from public view)
+    archived = status in ('archive', 'draft')
 
     doc = {
         '_id':         f'wp-post-{post_id}',
@@ -145,6 +157,7 @@ for post in posts:
         'slug':        {'_type': 'slug', 'current': slug},
         'publishedAt': published_at,
         'author':      'SCSF',
+        'archived':    archived,
     }
     if excerpt_text:
         doc['excerpt'] = excerpt_text

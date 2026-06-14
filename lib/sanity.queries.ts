@@ -81,7 +81,7 @@ export interface Page {
  */
 export async function getLatestAnnouncements(): Promise<Announcement[]> {
   return client.fetch<Announcement[]>(
-    `*[_type == "announcement"] | order(publishedAt desc)[0...3] {
+    `*[_type == "announcement" && archived != true] | order(publishedAt desc)[0...3] {
       _id,
       title,
       slug,
@@ -98,7 +98,7 @@ export async function getLatestAnnouncements(): Promise<Announcement[]> {
  */
 export async function getAllAnnouncements(): Promise<Announcement[]> {
   return client.fetch<Announcement[]>(
-    `*[_type == "announcement"] | order(publishedAt desc) {
+    `*[_type == "announcement" && archived != true] | order(publishedAt desc) {
       _id,
       title,
       slug,

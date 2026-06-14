@@ -53,13 +53,8 @@ export default function NewsletterArchivePage() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-lg font-bold text-brand-charcoal mb-3">Current Issue — Spring 2026</h2>
-              {/*
-                TODO: This HTML file is currently served from scsf.org/wp-content/uploads/.
-                Before the old site goes down, download it and add to /public/newsletters/inside-edge-spring-2026.html
-                then change src to "/newsletters/inside-edge-spring-2026.html"
-              */}
               <iframe
-                src="https://scsf.org/wp-content/uploads/inside-edge-spring-2026.html"
+                src="https://gvxwlqyeqlq01lkb.public.blob.vercel-storage.com/uploads/inside-edge-spring-2026.html"
                 title="Inside Edge Spring 2026"
                 style={{ width: '100%', height: '700px', border: 0 }}
               />

@@ -53,6 +53,13 @@ export default defineType({
       type: "string",
       initialValue: "Webmaster",
     }),
+    defineField({
+      name: "archived",
+      title: "Archived",
+      type: "boolean",
+      description: "Archived posts are hidden from the public announcements page.",
+      initialValue: false,
+    }),
   ],
   preview: {
     select: {
