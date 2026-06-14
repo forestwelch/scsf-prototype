@@ -28,8 +28,30 @@ def get(el, tag):
     found = el.find(tag, NS)
     return found.text if found is not None else None
 
+def strip_divi(content):
+    """Extract readable text from Divi/WPBakery shortcode soup.
+    Pulls text out of [et_pb_text] blocks, strips everything else."""
+    if not content: return content
+    # If no Divi shortcodes, return as-is
+    if '[et_pb_' not in content and '[vc_' not in content:
+        return content
+    # Extract text content from et_pb_text blocks
+    text_blocks = re.findall(r'\[et_pb_text[^\]]*\](.*?)\[/et_pb_text\]',
+                             content, re.DOTALL | re.I)
+    if text_blocks:
+        content = '\n\n'.join(text_blocks)
+    # Strip all remaining shortcode blocks with content: [tag ...]...[/tag]
+    content = re.sub(r'\[et_pb_\w+[^\]]*\].*?\[/et_pb_\w+\]', '', content,
+                     flags=re.DOTALL | re.I)
+    content = re.sub(r'\[vc_\w+[^\]]*\].*?\[/vc_\w+\]', '', content,
+                     flags=re.DOTALL | re.I)
+    # Strip remaining self-closing shortcode tags
+    content = re.sub(r'\[[^\]]+\]', '', content)
+    return content.strip()
+
 def strip_html(html):
     if not html: return ''
+    html = strip_divi(html)
     html = re.sub(r'</p>', '\n\n', html, flags=re.I)
     html = re.sub(r'<br\s*/?>', '\n', html, flags=re.I)
     html = re.sub(r'<[^>]+>', '', html)
@@ -80,7 +102,31 @@ for post in posts:
     stats[s] = stats.get(s, 0) + 1
 print(f'Status breakdown: {stats}', file=sys.stderr)
 
+# Deduplicate by slug — keep published > private > draft, then highest post_id
+STATUS_RANK = {'publish': 0, 'private': 1, 'inherit': 2, 'draft': 3, 'pending': 4}
+seen_slugs = {}
 for post in posts:
+    slug = get(post, 'wp:post_name') or ''
+    status = get(post, 'wp:status') or 'unknown'
+    post_id = int(get(post, 'wp:post_id') or 0)
+    if slug not in seen_slugs:
+        seen_slugs[slug] = (post, STATUS_RANK.get(status, 9), post_id)
+    else:
+        _, prev_rank, prev_id = seen_slugs[slug]
+        rank = STATUS_RANK.get(status, 9)
+        if rank < prev_rank or (rank == prev_rank and post_id > prev_id):
+            seen_slugs[slug] = (post, rank, post_id)
+
+posts = [v[0] for v in seen_slugs.values()]
+print(f'After dedup: {len(posts)} unique posts', file=sys.stderr)
+
+# Skip junk posts (test posts with no real content)
+SKIP_SLUGS = {'test'}
+
+for post in posts:
+    slug = get(post, 'wp:post_name') or ''
+    if slug in SKIP_SLUGS:
+        continue
     post_id     = get(post, 'wp:post_id') or '0'
     title_el    = post.find('title')
     title       = clean(title_el.text if title_el is not None else 'Untitled')
