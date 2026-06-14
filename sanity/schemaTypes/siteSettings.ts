@@ -5,6 +5,7 @@ export default defineType({
   title: "Site Settings",
   type: "document",
   // Singleton — only one document of this type should exist
+  // @ts-expect-error — __experimental_actions is valid Sanity API but not in current TS types
   __experimental_actions: ["update", "publish"],
   fields: [
     // --- Org identity ---
