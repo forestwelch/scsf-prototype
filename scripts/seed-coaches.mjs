@@ -44,18 +44,28 @@ const coaches = [
   { lastName: 'Yeghyayan',       firstName: 'Olga',      disciplines: ['FS','C','O'],                 rink: 'San Jose',      ratings: ['RFS'],                 email: 'OLGAV68@yahoo.com' },
 ];
 
-const docs = coaches.map((c, i) => ({
+function makeBio(c) {
+  const text = [
+    c.rink ? `Primary rink: ${c.rink}` : null,
+    c.ratings.length ? `PSA ratings: ${c.ratings.join(', ')}` : null,
+  ].filter(Boolean).join(' · ');
+  if (!text) return undefined;
+  return [{
+    _type: 'block',
+    _key: 'b1',
+    style: 'normal',
+    markDefs: [],
+    children: [{ _type: 'span', _key: 's1', text, marks: [] }],
+  }];
+}
+
+const docs = coaches.map((c) => ({
   _id: `coach-${c.lastName.toLowerCase().replace(/[^a-z]/g, '-')}-${c.firstName.toLowerCase()}`,
   _type: 'coach',
   name: `${c.firstName} ${c.lastName}`,
   email: c.email,
   specialties: c.disciplines,
-  // Store PSA ratings and primary rink in a bio field for display
-  bio: [
-    c.rink ? `Primary rink: ${c.rink}` : null,
-    c.ratings.length ? `PSA ratings: ${c.ratings.join(', ')}` : null,
-  ].filter(Boolean).join(' · ') || undefined,
-  order: i + 1,
+  bio: makeBio(c),
 }));
 
 console.log(`seeding ${docs.length} coaches…`);
