@@ -37,17 +37,36 @@ export default defineType({
       type: "date",
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: "distinction",
+      title: "Distinction",
+      type: "string",
+      description:
+        "Matches the club's test-passed table legend: * = With Honors, ** = With Distinction.",
+      options: {
+        list: [
+          { title: "None", value: "none" },
+          { title: "With Honors (*)", value: "honors" },
+          { title: "With Distinction (**)", value: "distinction" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "none",
+      validation: (Rule) => Rule.required(),
+    }),
   ],
   preview: {
     select: {
       name: "skaterName",
       test: "testType",
       level: "testLevel",
+      distinction: "distinction",
     },
     prepare(selection) {
-      const { name, test, level } = selection;
+      const { name, test, level, distinction } = selection;
+      const mark = distinction === "distinction" ? " **" : distinction === "honors" ? " *" : "";
       return {
-        title: name,
+        title: `${name}${mark}`,
         subtitle: `${test} - ${level}`,
       };
     },

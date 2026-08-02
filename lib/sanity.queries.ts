@@ -155,7 +155,6 @@ export interface Page {
     current: string;
   };
   content?: any[];
-  showInNav?: boolean;
 }
 
 // GROQ Queries
@@ -320,8 +319,7 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
       _id,
       title,
       slug,
-      content,
-      showInNav
+      content
     }`,
     { slug }
   );
@@ -348,6 +346,7 @@ export interface TestPassed {
   testType: 'moves' | 'freeskate' | 'dance' | 'pairs';
   testLevel: string;
   passedDate: string;
+  distinction?: 'none' | 'honors' | 'distinction';
 }
 
 /**
@@ -360,7 +359,57 @@ export async function getAllTestsPassed(): Promise<TestPassed[]> {
       skaterName,
       testType,
       testLevel,
-      passedDate
+      passedDate,
+      distinction
     }`
   );
+}
+
+// ─── Navigation (singleton) ───────────────────────────────────────────────────
+
+export interface NavLink {
+  label: string;
+  linkType: 'page' | 'custom';
+  page?: { slug: { current: string } } | null;
+  customPath?: string;
+  openInNewTab?: boolean;
+}
+
+export interface NavItem extends NavLink {
+  children?: NavLink[];
+  highlightButton?: boolean;
+}
+
+/**
+ * Resolve a NavLink's raw sanity data down to a usable href.
+ * "page" links build from the referenced page's slug; "custom" links are used as-is.
+ */
+export function resolveNavHref(link: NavLink): string {
+  if (link.linkType === 'page' && link.page?.slug?.current) {
+    return `/${link.page.slug.current}`;
+  }
+  return link.customPath || '#';
+}
+
+export async function getNavigation(): Promise<NavItem[]> {
+  const result = await client.fetch<{ items?: NavItem[] } | null>(
+    `*[_type == "navigation"][0] {
+      items[] {
+        label,
+        linkType,
+        "page": page->{ "slug": slug },
+        customPath,
+        openInNewTab,
+        highlightButton,
+        children[] {
+          label,
+          linkType,
+          "page": page->{ "slug": slug },
+          customPath,
+          openInNewTab
+        }
+      }
+    }`
+  );
+  return result?.items ?? [];
 }

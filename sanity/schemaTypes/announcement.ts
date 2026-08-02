@@ -45,7 +45,18 @@ export default defineType({
       name: "content",
       title: "Content",
       type: "array",
-      of: [{ type: "block" }],
+      description: 'Click "+" below the text to add a paragraph, heading, or inline image.',
+      of: [
+        { type: "block" },
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({ name: "alt", title: "Alt text", type: "string" }),
+            defineField({ name: "caption", title: "Caption (optional)", type: "string" }),
+          ],
+        },
+      ],
     }),
     defineField({
       name: "author",

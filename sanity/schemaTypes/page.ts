@@ -25,13 +25,29 @@ export default defineType({
       name: "content",
       title: "Content",
       type: "array",
-      of: [{ type: "block" }],
-    }),
-    defineField({
-      name: "showInNav",
-      title: "Show in Navigation",
-      type: "boolean",
-      initialValue: false,
+      description:
+        'Click the "+" below the text to add a paragraph, heading, or image. To add an image: click "+", choose "Image", then drag a file in or click to upload — then drag the image block up/down in this list to position it wherever you want it to appear on the page.',
+      of: [
+        { type: "block" },
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alt text",
+              type: "string",
+              description: "Describe the image for screen readers/SEO — e.g. \"SCSF Ice Theatre team performing at the 2025 gala.\"",
+            }),
+            defineField({
+              name: "caption",
+              title: "Caption (optional)",
+              type: "string",
+              description: "Shown below the image on the page, if filled in.",
+            }),
+          ],
+        },
+      ],
     }),
   ],
   preview: {

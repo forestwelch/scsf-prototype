@@ -88,6 +88,13 @@ export default function TestsPassedClient({ tests }: Props) {
           )}
         </div>
 
+        {filtered.some(t => t.distinction === 'honors' || t.distinction === 'distinction') && (
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500 mb-6 italic">
+            <span><span className="text-brand-bridge-orange font-semibold not-italic">**</span> With Distinction</span>
+            <span><span className="text-brand-bridge-orange font-semibold not-italic">*</span> With Honors</span>
+          </div>
+        )}
+
         {/* Discipline sections — stacked full-width */}
         <div className="space-y-10">
           {presentTypes.map(type => {
@@ -139,7 +146,15 @@ export default function TestsPassedClient({ tests }: Props) {
                                 className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'}
                               >
                                 <td className="px-5 py-2.5 font-medium text-brand-charcoal">{t.skaterName}</td>
-                                <td className="px-5 py-2.5 text-gray-600">{t.testLevel}</td>
+                                <td className="px-5 py-2.5 text-gray-600">
+                                  {t.testLevel}
+                                  {t.distinction === 'honors' && (
+                                    <span className="ml-1 text-brand-bridge-orange font-semibold" title="With Honors">*</span>
+                                  )}
+                                  {t.distinction === 'distinction' && (
+                                    <span className="ml-1 text-brand-bridge-orange font-semibold" title="With Distinction">**</span>
+                                  )}
+                                </td>
                                 <td className="px-5 py-2.5 text-gray-400 text-right text-xs">{formatDate(t.passedDate)}</td>
                               </tr>
                             ))}

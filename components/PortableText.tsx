@@ -1,10 +1,33 @@
 import { PortableText as SanityPortableText } from '@portabletext/react';
+import { urlFor } from '@/sanity/lib/image';
 
 interface PortableTextProps {
   value: any[];
 }
 
 const components = {
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset) return null;
+      const src = urlFor(value).width(1400).auto('format').url();
+      return (
+        <figure className="my-6">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={value.alt || ''}
+            className="w-full h-auto rounded-lg shadow-sm"
+            loading="lazy"
+          />
+          {value.caption && (
+            <figcaption className="mt-2 text-sm text-gray-500 text-center italic">
+              {value.caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+    },
+  },
   block: {
     h1: ({ children }: any) => <h1 className="text-4xl font-bold mb-4 mt-6">{children}</h1>,
     h2: ({ children }: any) => <h2 className="text-3xl font-bold mb-3 mt-5">{children}</h2>,

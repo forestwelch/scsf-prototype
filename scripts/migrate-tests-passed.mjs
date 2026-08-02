@@ -94,9 +94,17 @@ function classifyTestType(testName) {
   return 'moves';
 }
 
-// Strip honors/distinction markers (**, ***) from skater names
-function cleanSkaterName(name) {
-  return name.replace(/\*+$/, '').replace(/\s+$/, '').trim();
+// Strip honors/distinction markers (*, **) from skater names, returning both
+// the clean name and the distinction implied by the marker.
+// Legend on the WP tests-passed pages: * = With Honors, ** = With Distinction.
+function splitDistinction(rawName) {
+  const match = rawName.match(/(\*{1,2})\s*$/);
+  const skaterName = rawName.replace(/\*+\s*$/, '').trim();
+  let distinction = 'none';
+  if (match) {
+    distinction = match[1].length >= 2 ? 'distinction' : 'honors';
+  }
+  return { skaterName, distinction };
 }
 
 // Convert "January 2025" → "2025-01-15" (mid-month, avoids timezone edge cases)
@@ -164,13 +172,22 @@ function parseTestsPassedHtml(html, sourceSlug) {
         }
 
         if (cells.length >= 2) {
-          const skaterName = cleanSkaterName(cells[0]);
-          const testLevel  = cells[1].trim();
+          // The * / ** distinction marker lives on the Test Name column
+          // (e.g. "Hickory Hoedown (Follow Solo)*"), not the skater name.
+          // Fall back to checking the skater-name cell too, since some
+          // legacy pages mark it there instead.
+          const skaterCell = cells[0].trim();
+          const { skaterName: cleanFromLevel, distinction: distFromLevel } = splitDistinction(cells[1]);
+          const { skaterName: cleanSkater, distinction: distFromName } = splitDistinction(skaterCell);
+          const skaterName = cleanSkater;
+          const testLevel  = cleanFromLevel;
+          const distinction = distFromLevel !== 'none' ? distFromLevel : distFromName;
           if (!skaterName || !testLevel || skaterName.toLowerCase() === 'skater') continue;
 
           records.push({
             skaterName,
             testLevel,
+            distinction,
             testType:   classifyTestType(testLevel),
             passedDate: monthYearToDate(month, year),
             _source:    sourceSlug,
@@ -231,34 +248,80 @@ async function main() {
   }, {});
   console.log('\nBy type:', typeCounts);
 
+  // ─── Stable, content-based IDs ─────────────────────────────────────────────
+  // IDs are derived from the record's own data (date + skater + level + type),
+  // not from its position in the array. Position-based IDs break on re-import
+  // whenever the source HTML's row order shifts even slightly, which silently
+  // creates duplicate documents instead of updating the existing ones — that's
+  // what happened on the previous run. A running per-key counter still lets
+  // genuinely repeated identical rows (e.g. the same skater/level listed twice
+  // in one month) get distinct, but stable, IDs.
+  const keySeen = new Map();
+  function stableId(r) {
+    const base = `wp-test-${r.passedDate}-${r.skaterName}-${r.testLevel}-${r.testType}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const n = keySeen.get(base) ?? 0;
+    keySeen.set(base, n + 1);
+    return `${base}-${n}`;
+  }
+
+  const idRecords = allRecords.map((r) => ({ ...r, _id: stableId(r) }));
+  const keepIds = new Set(idRecords.map((r) => r._id));
+
   // Import to Sanity in batches of 100
   console.log('\n⬆️  Importing to Sanity…');
   const BATCH = 100;
   let imported = 0;
 
-  for (let i = 0; i < allRecords.length; i += BATCH) {
-    const batch = allRecords.slice(i, i + BATCH);
+  for (let i = 0; i < idRecords.length; i += BATCH) {
+    const batch = idRecords.slice(i, i + BATCH);
     const tx = sanity.transaction();
 
-    batch.forEach((r, j) => {
-      const id = `wp-test-${r.passedDate}-${r.skaterName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()}-${i + j}`;
+    batch.forEach((r) => {
       tx.createOrReplace({
-        _id:        id,
-        _type:      'testPassed',
-        skaterName: r.skaterName,
-        testType:   r.testType,
-        testLevel:  r.testLevel,
-        passedDate: r.passedDate,
+        _id:         r._id,
+        _type:       'testPassed',
+        skaterName:  r.skaterName,
+        testType:    r.testType,
+        testLevel:   r.testLevel,
+        passedDate:  r.passedDate,
+        distinction: r.distinction || 'none',
       });
     });
 
     await tx.commit();
     imported += batch.length;
-    process.stdout.write(`\r   ${imported}/${allRecords.length} imported…`);
+    process.stdout.write(`\r   ${imported}/${idRecords.length} imported…`);
   }
 
   console.log(`\n\n✅ Done — ${imported} test records imported to Sanity!`);
-  console.log('   Open Sanity Studio → Tests Passed to verify.');
+
+  // ─── Clean up orphaned duplicates from prior runs ──────────────────────────
+  // Any existing "wp-test-*" doc whose ID isn't in this run's keep-list is a
+  // leftover from an earlier ID scheme (like the position-based one this
+  // script used to use) and is a duplicate of something we just wrote.
+  console.log('\n🧹 Checking for orphaned duplicates from earlier runs…');
+  const existingIds = await sanity.fetch(
+    `*[_type == "testPassed" && string::startsWith(_id, "wp-test-")]._id`
+  );
+  const staleIds = existingIds.filter((id) => !keepIds.has(id));
+
+  if (staleIds.length === 0) {
+    console.log('   None found — nothing to clean up.');
+  } else {
+    console.log(`   Found ${staleIds.length} stale duplicate(s). Deleting…`);
+    for (let i = 0; i < staleIds.length; i += BATCH) {
+      const batch = staleIds.slice(i, i + BATCH);
+      const tx = sanity.transaction();
+      batch.forEach((id) => tx.delete(id));
+      await tx.commit();
+    }
+    console.log(`   ✅ Deleted ${staleIds.length} stale document(s).`);
+  }
+
+  console.log('\nOpen Sanity Studio → Tests Passed to verify.');
 }
 
 main().catch(err => {
