@@ -13,6 +13,14 @@ export const metadata = {
   description: "Supporting figure skaters of all levels in San Francisco. Join our community of skaters, coaches, and families.",
 };
 
+// Applies to every page in the app unless a page overrides it. Without this,
+// pages that fetch Sanity data (which is most of them) get statically built
+// once and frozen — Sanity edits then only show up after the next code
+// deploy, not when you hit "Publish" in Studio. This makes Next.js re-fetch
+// from Sanity in the background at most once every 60 seconds per page, so
+// published changes go live within a minute without needing a deploy.
+export const revalidate = 60;
+
 export default function RootLayout({
   children,
 }: {
