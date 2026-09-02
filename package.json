@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@portabletext/react": "^6.0.2",
+    "@sanity/icons": "^3.8.0",
     "@sanity/image-url": "^1.2.0",
+    "@sanity/ui": "^3.5.4",
     "@sanity/vision": "^4.22.0",
     "@vercel/blob": "^2.4.0",
     "next": "16.1.1",
@@ -18,7 +20,9 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sanity": "^4.22.0",
-    "styled-components": "^6.3.6"
+    "styled-components": "^6.3.6",
+    "vercel": "^59.11.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
