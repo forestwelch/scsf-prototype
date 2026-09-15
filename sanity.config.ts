@@ -13,6 +13,7 @@ import { apiVersion, dataset, projectId } from "./sanity/env";
 import { schemaTypes } from "./sanity/schemaTypes";
 import { structure } from "./sanity/structure";
 import { importTestsPassedTool } from "./sanity/tools/importTestsPassed";
+import { manageContentTool } from "./sanity/tools/manageContent";
 
 export default defineConfig({
   basePath: "/studio",
@@ -28,5 +29,5 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
   ],
-  tools: (prev) => [...prev, importTestsPassedTool()],
+  tools: (prev) => [...prev, importTestsPassedTool(), manageContentTool()],
 });
