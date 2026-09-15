@@ -9,7 +9,7 @@
  */
 import * as XLSX from 'xlsx'
 
-export type TestType = 'moves' | 'freeskate' | 'dance' | 'pairs'
+export type TestType = 'moves' | 'freeskate' | 'dance'
 export type Distinction = 'none' | 'honors' | 'distinction'
 
 export interface ParsedRow {
@@ -39,8 +39,6 @@ const DANCE_PATTERNS = [
 
 export function classifyTestType(testName: string): TestType {
   const lower = testName.toLowerCase()
-
-  if (lower.includes('pairs') || lower.includes('pair ')) return 'pairs'
 
   if (lower.includes('dance') || lower.includes('solo')) return 'dance'
   for (const pattern of DANCE_PATTERNS) {

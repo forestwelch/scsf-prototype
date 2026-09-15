@@ -17,10 +17,9 @@ export default defineType({
       type: "string",
       options: {
         list: [
-          { title: "Moves in the Field", value: "moves" },
-          { title: "Free Skate", value: "freeskate" },
+          { title: "Skating Skills", value: "moves" },
+          { title: "Singles", value: "freeskate" },
           { title: "Dance", value: "dance" },
-          { title: "Pairs", value: "pairs" },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -33,9 +32,19 @@ export default defineType({
     }),
     defineField({
       name: "passedDate",
-      title: "Date Passed",
-      type: "date",
-      validation: (Rule) => Rule.required(),
+      title: "Test Session (Month/Year)",
+      type: "string",
+      description: 'The month and year the test was passed — no day. Format: YYYY-MM, e.g. "2026-06".',
+      validation: (Rule) =>
+        Rule.required().regex(/^\d{4}-\d{2}$/, { name: "YYYY-MM" }),
+    }),
+    defineField({
+      name: "uploadedAt",
+      title: "Uploaded",
+      type: "datetime",
+      description: "When this record was imported/created. Autofilled — separate from the Test Session date above, which is the date the test was actually passed.",
+      readOnly: true,
+      initialValue: () => new Date().toISOString(),
     }),
     defineField({
       name: "distinction",
@@ -55,19 +64,36 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+  orderings: [
+    {
+      title: "Recently uploaded",
+      name: "uploadedAtDesc",
+      by: [{ field: "uploadedAt", direction: "desc" }],
+    },
+    {
+      title: "Test session, newest first",
+      name: "passedDateDesc",
+      by: [{ field: "passedDate", direction: "desc" }],
+    },
+  ],
   preview: {
     select: {
       name: "skaterName",
       test: "testType",
       level: "testLevel",
       distinction: "distinction",
+      passedDate: "passedDate",
+      uploadedAt: "uploadedAt",
     },
     prepare(selection) {
-      const { name, test, level, distinction } = selection;
+      const { name, test, level, distinction, passedDate, uploadedAt } = selection;
       const mark = distinction === "distinction" ? " **" : distinction === "honors" ? " *" : "";
+      const uploaded = uploadedAt
+        ? new Date(uploadedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+        : "unknown";
       return {
         title: `${name}${mark}`,
-        subtitle: `${test} - ${level}`,
+        subtitle: `${test} - ${level} (${passedDate}) - uploaded ${uploaded}`,
       };
     },
   },

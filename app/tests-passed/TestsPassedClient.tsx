@@ -4,26 +4,26 @@ import { useState, Fragment } from 'react';
 import type { TestPassed } from '@/lib/sanity.queries';
 
 const TEST_TYPE_LABELS: Record<string, string> = {
-  moves:     'Moves in the Field',
-  freeskate: 'Free Skate',
-  dance:     'Ice Dance',
-  pairs:     'Pairs',
+  moves:     'Skating Skills',
+  freeskate: 'Singles',
+  dance:     'Dance',
 };
 
-const TEST_TYPE_ORDER = ['moves', 'freeskate', 'dance', 'pairs'];
+const TEST_TYPE_ORDER = ['moves', 'freeskate', 'dance'];
 
 const TEST_TYPE_COLORS: Record<string, string> = {
   moves:     'bg-brand-royal-blue/10 text-brand-royal-blue border-brand-royal-blue/20',
   freeskate: 'bg-brand-bridge-orange/10 text-brand-bridge-orange border-brand-bridge-orange/20',
   dance:     'bg-brand-sky-blue/10 text-brand-sky-blue border-brand-sky-blue/30',
-  pairs:     'bg-brand-golden-yellow/10 text-brand-charcoal border-brand-golden-yellow/30',
 };
+
+const ALL_TYPES = 'all';
 
 const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function formatDate(isoDate: string) {
-  // "2025-03-15" → "Mar 2025"
-  const [, mm, ] = isoDate.split('-');
+  // "2025-03" → "Mar 2025"
+  const [, mm] = isoDate.split('-');
   return MONTH_ABBR[parseInt(mm, 10) - 1] ?? mm;
 }
 
@@ -37,6 +37,7 @@ export default function TestsPassedClient({ tests }: Props) {
   ).sort((a, b) => Number(b) - Number(a));
 
   const [selectedYear, setSelectedYear] = useState(years[0] ?? '');
+  const [selectedType, setSelectedType] = useState<string>(ALL_TYPES);
 
   const filtered = tests.filter(t => t.passedDate.startsWith(selectedYear));
 
@@ -46,7 +47,9 @@ export default function TestsPassedClient({ tests }: Props) {
     byType[t.testType].push(t);
   }
 
-  const presentTypes = TEST_TYPE_ORDER.filter(type => (byType[type]?.length ?? 0) > 0);
+  const presentTypes = TEST_TYPE_ORDER.filter(type =>
+    (byType[type]?.length ?? 0) > 0 && (selectedType === ALL_TYPES || selectedType === type)
+  );
 
   return (
     <div>
@@ -71,22 +74,37 @@ export default function TestsPassedClient({ tests }: Props) {
         </div>
       </div>
 
-      {/* Summary badges */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-wrap gap-3 mb-8">
-          {presentTypes.map(type => (
-            <div
-              key={type}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${TEST_TYPE_COLORS[type]}`}
-            >
-              {TEST_TYPE_LABELS[type]}
-              <span className="font-bold">{byType[type].length}</span>
-            </div>
-          ))}
-          {filtered.length === 0 && (
-            <p className="text-gray-500">No records for {selectedYear}.</p>
-          )}
+      {/* Type Tabs */}
+      <div className="bg-gray-50 border-b border-gray-200 sticky top-[calc(4rem+44px)] z-30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1 overflow-x-auto py-2">
+            {[ALL_TYPES, ...TEST_TYPE_ORDER].map(type => (
+              <button
+                key={type}
+                onClick={() => setSelectedType(type)}
+                className={`px-5 py-2 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${
+                  selectedType === type
+                    ? 'bg-brand-charcoal text-white'
+                    : 'text-gray-500 hover:text-brand-charcoal hover:bg-gray-200/60'
+                }`}
+              >
+                {type === ALL_TYPES ? 'All Types' : TEST_TYPE_LABELS[type]}
+                <span className="ml-1.5 opacity-70">
+                  {type === ALL_TYPES ? filtered.length : (byType[type]?.length ?? 0)}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {filtered.length === 0 && (
+          <p className="text-gray-500 mb-8">No records for {selectedYear}.</p>
+        )}
+        {filtered.length > 0 && presentTypes.length === 0 && (
+          <p className="text-gray-500 mb-8">No {TEST_TYPE_LABELS[selectedType]} records for {selectedYear}.</p>
+        )}
 
         {filtered.some(t => t.distinction === 'honors' || t.distinction === 'distinction') && (
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500 mb-6 italic">

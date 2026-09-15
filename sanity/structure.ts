@@ -28,7 +28,45 @@ export const structure: StructureResolver = (S) =>
             .title('Site Settings')
         ),
       S.divider(),
+      S.listItem()
+        .title('Tests Passed')
+        .id('testPassed')
+        .child(
+          S.list()
+            .title('Tests Passed')
+            .items([
+              S.listItem()
+                .title('All (recently uploaded first)')
+                .child(
+                  S.documentTypeList('testPassed')
+                    .title('All Tests Passed')
+                    .defaultOrdering([{field: 'uploadedAt', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('Skating Skills')
+                .child(
+                  S.documentTypeList('testPassed')
+                    .title('Skating Skills')
+                    .filter('_type == "testPassed" && testType == "moves"')
+                ),
+              S.listItem()
+                .title('Singles')
+                .child(
+                  S.documentTypeList('testPassed')
+                    .title('Singles')
+                    .filter('_type == "testPassed" && testType == "freeskate"')
+                ),
+              S.listItem()
+                .title('Dance')
+                .child(
+                  S.documentTypeList('testPassed')
+                    .title('Dance')
+                    .filter('_type == "testPassed" && testType == "dance"')
+                ),
+            ])
+        ),
       ...S.documentTypeListItems().filter(
-        (item) => !['navigation', 'siteSettings'].includes(item.getId() ?? '')
+        (item) => !['navigation', 'siteSettings', 'testPassed'].includes(item.getId() ?? '')
       ),
     ])

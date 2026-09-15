@@ -354,9 +354,9 @@ export async function getAllPages(): Promise<Page[]> {
 export interface TestPassed {
   _id: string;
   skaterName: string;
-  testType: 'moves' | 'freeskate' | 'dance' | 'pairs';
+  testType: 'moves' | 'freeskate' | 'dance';
   testLevel: string;
-  passedDate: string;
+  passedDate: string; // "YYYY-MM" — month and year only
   distinction?: 'none' | 'honors' | 'distinction';
 }
 

@@ -17,10 +17,9 @@ import { useClient } from 'sanity'
 import { type Distinction, type ParsedRow, parseWorkbookFile, type TestType } from './parse'
 
 const TEST_TYPE_OPTIONS: { value: TestType; title: string }[] = [
-  { value: 'moves', title: 'Moves in the Field' },
-  { value: 'freeskate', title: 'Free Skate' },
+  { value: 'moves', title: 'Skating Skills' },
+  { value: 'freeskate', title: 'Singles' },
   { value: 'dance', title: 'Dance' },
-  { value: 'pairs', title: 'Pairs' },
 ]
 
 const DISTINCTION_LABEL: Record<Distinction, string> = {
@@ -93,7 +92,7 @@ export default function ImportTestsPassedTool() {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)))
   }, [])
 
-  const canImport = includedCount > 0 && /^\d{4}-\d{2}-\d{2}$/.test(batchDate) && !importing
+  const canImport = includedCount > 0 && /^\d{4}-\d{2}$/.test(batchDate) && !importing
 
   const handleImport = useCallback(async () => {
     if (!canImport) return
@@ -116,6 +115,7 @@ export default function ImportTestsPassedTool() {
           testLevel: r.testLevel,
           passedDate: batchDate,
           distinction: r.distinction,
+          uploadedAt: new Date().toISOString(),
         }
       })
 
@@ -194,9 +194,9 @@ export default function ImportTestsPassedTool() {
                 <Flex align="center" gap={4}>
                   <Box flex={1}>
                     <Stack space={3}>
-                      <Text size={1} weight="semibold">Date passed for this batch</Text>
+                      <Text size={1} weight="semibold">Month/year passed for this batch</Text>
                       <TextInput
-                        type="date"
+                        type="month"
                         value={batchDate}
                         onChange={(e) => setBatchDate(e.currentTarget.value)}
                         disabled={importing}
