@@ -27,16 +27,12 @@ export default defineType({
 
     // --- Embeds / external tools ---
     defineField({
-      name: "zeffyDonateUrl",
-      title: "Zeffy Donate Form Embed URL",
-      type: "url",
-      description: "The src URL for the Zeffy donation iframe on /donate",
-    }),
-    defineField({
-      name: "zeffyNewsletterUrl",
-      title: "Zeffy Newsletter Signup Embed URL",
-      type: "url",
-      description: "The src URL for the Zeffy newsletter signup iframe",
+      name: "embeds",
+      title: "Embeds",
+      type: "array",
+      description:
+        'Named embeds that plug into specific fixed spots on the site — currently the Donate page ("donate-form") and the newsletter signup form on the newsletter archive page ("newsletter-signup"). To add a NEW embed elsewhere (e.g. a fresh Zeffy form for the gala), you almost always want to add an "Embed" block directly inside that page\'s content instead — use this list only for embeds that live in these fixed, code-defined spots.',
+      of: [{ type: "embed" }],
     }),
     defineField({
       name: "mailchimpArchiveUrl",

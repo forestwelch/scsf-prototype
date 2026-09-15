@@ -1,5 +1,5 @@
 import Container from '@/components/Container';
-import { getSiteSettings } from '@/lib/sanity.queries';
+import { getSiteSettings, findEmbed } from '@/lib/sanity.queries';
 
 export const metadata = {
   title: 'The Inside Edge Quarterly Newsletter | Skating Club of San Francisco',
@@ -9,7 +9,7 @@ export const metadata = {
 export default async function NewsletterArchivePage() {
   const settings = await getSiteSettings();
 
-  const newsletterSignupUrl = settings.zeffyNewsletterUrl
+  const newsletterSignupUrl = findEmbed(settings, 'newsletter-signup')?.url
     ?? 'https://www.zeffy.com/en-US/embed/newsletter-form/sign-up-for-updates-from-the-inside-edge';
   const archiveUrl = settings.mailchimpArchiveUrl
     ?? 'https://us5.campaign-archive.com/home/?u=fc9518edb46da79820c912377&id=7aded53f93';

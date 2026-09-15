@@ -55,7 +55,7 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "array",
-      description: 'Click "+" below the text to add a paragraph, heading, or inline image.',
+      description: 'Click "+" below the text to add a paragraph, heading, inline image, or embed.',
       of: [
         { type: "block" },
         {
@@ -66,6 +66,7 @@ export default defineType({
             defineField({ name: "caption", title: "Caption (optional)", type: "string" }),
           ],
         },
+        { type: "embed" },
       ],
     }),
     defineField({

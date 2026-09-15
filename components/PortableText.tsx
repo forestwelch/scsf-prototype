@@ -27,6 +27,21 @@ const components = {
         </figure>
       );
     },
+    embed: ({ value }: any) => {
+      if (!value?.url) return null;
+      return (
+        <div className="my-6 rounded-lg overflow-hidden shadow-sm" style={{ height: value.height || 800 }}>
+          <iframe
+            title={value.label || 'Embedded content'}
+            src={value.url}
+            style={{ border: 0, width: '100%', height: '100%' }}
+            // @ts-expect-error — allowTransparency is a valid iframe attr not in React types
+            allowTransparency="true"
+            allowPaymentRequest
+          />
+        </div>
+      );
+    },
   },
   block: {
     h1: ({ children }: any) => <h1 className="text-4xl font-bold mb-4 mt-6">{children}</h1>,

@@ -9,6 +9,7 @@ import navigation, { navItem, navChild } from "./navigation";
 import heroSlide from "./heroSlide";
 import faq from "./faq";
 import membershipCategory from "./membershipCategory";
+import embed from "./embedBlock";
 
 export const schemaTypes = [
   // Singletons
@@ -17,6 +18,8 @@ export const schemaTypes = [
   // Nav object types (not standalone documents, but must be registered)
   navItem,
   navChild,
+  // Shared object types
+  embed,
   // Content
   announcement,
   event,

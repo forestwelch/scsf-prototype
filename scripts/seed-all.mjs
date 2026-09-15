@@ -5,7 +5,12 @@
  *   - faq (22 Q&As across 6 categories)
  *   - membershipCategory (9 tiers)
  *
- * Safe to re-run — uses createOrReplace with stable _ids.
+ * ⚠️ This is for seeding a FRESH/empty dataset only. It uses createOrReplace
+ * with the fixed id "siteSettings", which REPLACES the entire live Site
+ * Settings document — including any embeds, links, or other fields someone
+ * has since edited in Studio. Do not re-run this against production once
+ * real editors are using Site Settings, or you'll wipe their changes back to
+ * whatever's hardcoded here.
  *
  * Usage:
  *   bun --env-file=.env.local scripts/seed-all.mjs
@@ -37,8 +42,24 @@ const siteSettings = {
   venuePhone: '(415) 820-3521',
   facebookUrl: 'https://www.facebook.com/scsf.org/',
   instagramUrl: 'https://www.instagram.com/explore/tags/skatingclubofsanfrancisco/',
-  zeffyDonateUrl: 'https://www.zeffy.com/embed/donation-form/donate-to-support-our-club-athletes',
-  zeffyNewsletterUrl: 'https://www.zeffy.com/en-US/embed/newsletter-form/sign-up-for-updates-from-the-inside-edge',
+  embeds: [
+    {
+      _key: 'donate-form',
+      _type: 'embed',
+      key: 'donate-form',
+      label: 'Zeffy Donation Form (Donate page)',
+      url: 'https://www.zeffy.com/embed/donation-form/donate-to-support-our-club-athletes',
+      height: 700,
+    },
+    {
+      _key: 'newsletter-signup',
+      _type: 'embed',
+      key: 'newsletter-signup',
+      label: 'Zeffy Newsletter Signup',
+      url: 'https://www.zeffy.com/en-US/embed/newsletter-form/sign-up-for-updates-from-the-inside-edge',
+      height: 340,
+    },
+  ],
   mailchimpArchiveUrl: 'https://us5.campaign-archive.com/home/?u=fc9518edb46da79820c912377&id=7aded53f93',
   currentNewsletterUrl: `${BLOB}/inside-edge-spring-2026.html`,
   currentNewsletterLabel: 'Spring 2026',

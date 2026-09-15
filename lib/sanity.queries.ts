@@ -2,6 +2,13 @@ import { client } from '@/sanity/lib/client';
 
 // ─── Site Settings (singleton) ───────────────────────────────────────────────
 
+export interface SiteEmbed {
+  label: string;
+  url: string;
+  height?: number;
+  key?: string;
+}
+
 export interface SiteSettings {
   orgName?: string;
   poBox?: string;
@@ -12,8 +19,7 @@ export interface SiteSettings {
   venuePhone?: string;
   facebookUrl?: string;
   instagramUrl?: string;
-  zeffyDonateUrl?: string;
-  zeffyNewsletterUrl?: string;
+  embeds?: SiteEmbed[];
   mailchimpArchiveUrl?: string;
   currentNewsletterUrl?: string;
   currentNewsletterLabel?: string;
@@ -24,6 +30,11 @@ export interface SiteSettings {
 export async function getSiteSettings(): Promise<SiteSettings> {
   const result = await client.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]`);
   return result ?? {};
+}
+
+/** Find a named embed from Site Settings by its "key" (e.g. "donate-form"). */
+export function findEmbed(settings: SiteSettings, key: string): SiteEmbed | undefined {
+  return settings.embeds?.find((e) => e.key === key);
 }
 
 // ─── Hero Slides ─────────────────────────────────────────────────────────────

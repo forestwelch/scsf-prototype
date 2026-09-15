@@ -1,5 +1,5 @@
 import Container from '@/components/Container';
-import { getSiteSettings } from '@/lib/sanity.queries';
+import { getSiteSettings, findEmbed } from '@/lib/sanity.queries';
 
 export const metadata = {
   title: 'Donate | Skating Club of San Francisco',
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default async function DonatePage() {
   const settings = await getSiteSettings();
-  const donateUrl = settings.zeffyDonateUrl
+  const donateUrl = findEmbed(settings, 'donate-form')?.url
     ?? 'https://www.zeffy.com/embed/donation-form/donate-to-support-our-club-athletes';
 
   return (

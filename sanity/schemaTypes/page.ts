@@ -26,7 +26,7 @@ export default defineType({
       title: "Content",
       type: "array",
       description:
-        'Click the "+" below the text to add a paragraph, heading, or image. To add an image: click "+", choose "Image", then drag a file in or click to upload — then drag the image block up/down in this list to position it wherever you want it to appear on the page.',
+        'Click the "+" below the text to add a paragraph, heading, image, or embed. To add an image: click "+", choose "Image", then drag a file in or click to upload — then drag the block up/down to position it. To embed something (a Zeffy form, Google Form, YouTube video, etc.): click "+", choose "Embed", paste the URL.',
       of: [
         { type: "block" },
         {
@@ -47,6 +47,7 @@ export default defineType({
             }),
           ],
         },
+        { type: "embed" },
       ],
     }),
   ],
