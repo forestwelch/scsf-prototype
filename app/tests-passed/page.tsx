@@ -1,5 +1,5 @@
 import Container from '@/components/Container';
-import { getAllTestsPassed } from '@/lib/sanity.queries';
+import { getAllTestsPassed, getTestsPassedPhotos } from '@/lib/sanity.queries';
 import TestsPassedClient from './TestsPassedClient';
 
 export const metadata = {
@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function TestsPassedPage() {
-  const tests = await getAllTestsPassed();
+  const [tests, photos] = await Promise.all([getAllTestsPassed(), getTestsPassedPhotos()]);
 
   return (
     <div className="min-h-screen bg-brand-off-white">
@@ -21,6 +21,20 @@ export default async function TestsPassedPage() {
           </p>
         </Container>
       </div>
+
+      {photos.length > 0 && (
+        <Container className="pt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" aria-label="Tests passed photos">
+            {photos.map((photo) => photo.asset?.url && (
+              <figure key={photo._key} className="overflow-hidden rounded-lg bg-white shadow-sm">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo.asset.url} alt={photo.alt || ''} className="w-full h-64 object-cover" />
+                {photo.caption && <figcaption className="p-3 text-sm text-gray-600">{photo.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        </Container>
+      )}
 
       {tests.length === 0 ? (
         <Container className="py-12">

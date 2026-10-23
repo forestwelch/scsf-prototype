@@ -19,6 +19,31 @@ export interface SiteSettings {
   venuePhone?: string;
   facebookUrl?: string;
   instagramUrl?: string;
+  webmasterEmail?: string;
+  googleAnalyticsId?: string;
+  membershipPageIntro?: string;
+  membershipPageTitle?: string;
+  membershipRenewalTitle?: string;
+  membershipRenewalParagraphs?: string[];
+  membershipRenewalChecklist?: string[];
+  membershipCategoriesTitle?: string;
+  membershipCategoriesIntro?: string;
+  membershipTransferNotice?: string;
+  membershipQuestionHeading?: string;
+  membershipQuestionText?: string;
+  membershipInfoSections?: Array<{_key: string; title: string; text?: string; linkLabel?: string; linkUrl?: string}>;
+  eventsPageTitle?: string;
+  eventsPageIntro?: string;
+  announcementsPageTitle?: string;
+  announcementsPageIntro?: string;
+  announcementsShowNewsletterSignup?: boolean;
+  announcementsShowInstagram?: boolean;
+  testsPassedPhotos?: Array<{
+    _key: string;
+    alt?: string;
+    caption?: string;
+    asset?: {url?: string};
+  }>;
   zeffyDonateUrl?: string;
   zeffyNewsletterUrl?: string;
   embeds?: SiteEmbed[];
@@ -32,6 +57,14 @@ export interface SiteSettings {
 export async function getSiteSettings(): Promise<SiteSettings> {
   const result = await client.fetch<SiteSettings | null>(`*[_type == "siteSettings"][0]`);
   return result ?? {};
+}
+
+export async function getTestsPassedPhotos(): Promise<NonNullable<SiteSettings['testsPassedPhotos']>> {
+  return (await client.fetch(
+    `*[_type == "siteSettings"][0].testsPassedPhotos[]{
+      _key, alt, caption, asset->{url}
+    }`
+  )) ?? [];
 }
 
 /** Find a named embed from Site Settings by its "key" (e.g. "donate-form"). */
@@ -345,7 +378,7 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
       _id,
       title,
       slug,
-      content
+      content[]{..., asset->{url}}
     }`,
     { slug }
   );

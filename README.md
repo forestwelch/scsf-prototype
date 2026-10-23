@@ -22,9 +22,10 @@ change.
 
 | What | Where in Studio |
 |---|---|
-| Site-wide settings: address, phone, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Site Settings** (pinned at top) |
+| Site-wide settings: address, phone, website contact email, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Site Settings** → Organization & Contact / Social Media |
+| Google Analytics 4 tracking ID (optional) | **Site Settings** → Analytics (requires the club's `G-...` measurement ID) |
 | The navigation menu — order, labels, links, dropdowns, the Donate button | **Navigation** (pinned at top) |
-| Generic pages such as Ice Theatre and policy pages, including rich text, images, and embeds | **Pages** or **Manage Content** |
+| Generic pages such as Ice Theatre and policy pages, including rich text, images, PDF uploads, and embeds | **Pages** or **Manage Content** |
 | News posts | **Announcements** |
 | Events (gala, competitions, test sessions) | **Events** |
 | Tests passed records, incl. Honors/Distinction | **Tests Passed** |
@@ -32,13 +33,16 @@ change.
 | Board members | **Board Members** |
 | FAQs | **FAQs** |
 | Homepage hero slides | **Hero Slides** |
-| Membership category cards (names, prices, eligibility, features) | **Membership Categories** |
+| Membership page copy and membership category cards (names, prices, eligibility, features) | **Site Settings** → Membership Page Copy; **Membership Categories** |
+| Events page heading and intro | **Site Settings** → Events Page Copy |
+| Announcements heading and intro; optional newsletter signup and Instagram link | **Site Settings** → Announcements Page Copy; Zeffy and Social Media settings |
+| Photos above the Tests Passed records | **Site Settings** → Tests Passed Page Photos |
 
-The About, Membership, Programs, and other fixed routes have page copy and
-layout in code. Some parts of those routes use Sanity data: for example, the
-About page reads Board Members and Site Settings, while the Membership page
-reads Membership Categories. A generic Pages document does not replace the
-code for one of these fixed routes.
+Page layouts and fixed-route sections remain in code. The Membership page's
+listed copy, membership category records, Events and Announcements page
+headings/intro, footer website contact address, and Tests Passed photos have
+Sanity controls. A generic Pages document does not replace the layout or code
+for one of these fixed routes.
 
 ### Lives in code (requires a developer + deploy)
 
@@ -100,6 +104,40 @@ Open the page in Studio and use the **Image** action in the Content editor
 toolbar. Drag a file in or choose one to upload, then add alt text (for
 accessibility/SEO) and an optional caption. Reorder content blocks in the
 editor. This works on Pages, Announcements, and Events.
+
+**Q: How do I add or replace a PDF on a page such as CCIA Calendar?**
+Open the page in Studio → Pages and edit its Content. Add a **File** block and
+upload a PDF, or add an **Embed** block with a public PDF URL. The PDF appears
+in an on-page viewer with a link to open it separately. Older WordPress PDF
+Embedder shortcodes are also rendered as PDF viewers for compatibility.
+
+**Q: Where do I update Membership or Events wording?**
+Open Studio → Site Settings and use the **Membership Page Copy** or **Events
+Page Copy** section. Empty optional fields keep the current site wording.
+Membership category names, prices, eligibility, and benefits remain separate
+records under **Membership Categories**.
+
+**Q: How do I add the Tests Passed photos?**
+Open Studio → Site Settings → **Tests Passed Page Photos**. Add each photo,
+write its alt text, optionally add a caption, and publish Site Settings. Remove
+a photo from that list to hide it from the page.
+
+**Q: How do I enable Google Analytics?**
+Ask the club's Google Analytics administrator for the GA4 Measurement ID
+(format `G-XXXXXXXXXX`), then enter it in Studio → Site Settings → **Analytics**
+and publish. Tracking remains off while that field is blank.
+
+**Q: Where is the website contact email?**
+Studio → Site Settings → **Organization & Contact** → Website Contact Email.
+The footer uses `webmaster@scsf.org` unless another address is entered.
+
+**Q: Where is Publish, and when should changes show up?**
+In Sanity's document editor, Publish is in the document toolbar at the top
+right; it becomes available when there are draft changes to publish. Publishing
+does not require a code deploy. Pages that use Sanity content refresh in the
+background about once a minute. If a change is still missing after that, check
+that the right document was published and ask a developer to inspect the
+deployment/cache.
 
 **Q: How does "With Honors" / "With Distinction" work on Tests Passed?**
 Each test record is available from Studio → **Manage Content** → Tests Passed
@@ -258,3 +296,15 @@ scripts/                One-off migration/import scripts (WordPress → Sanity, 
 - **Site-wide old-vs-new content audit** — systematically compare every page
   against the old scsf.org to catch anything else missing beyond images
   (Ice Theatre was the first one found and fixed).
+- **No-code coverage outside the reported list** — About, Programs, Resources,
+  and some other fixed-page copy still lives in code. The controls above cover
+  the specific editor requests; completing the broader board goal means
+  moving the remaining fixed-page copy into Sanity as a separate project.
+- **Update current season content** — Membership currently falls back to
+  2025–26 wording. The board should enter the approved current-season dates and
+  renewal text in Site Settings → Membership Page Copy.
+- **Optional integrations and content choices** — get the club's GA4
+  measurement ID and confirm any privacy/consent requirements before turning
+  tracking on; replace the current Instagram hashtag URL with the official
+  profile and explicitly enable the Announcements link; confirm whether the
+  existing 2026 CCIA PDFs are still current before replacing them.

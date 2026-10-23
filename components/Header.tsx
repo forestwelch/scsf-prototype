@@ -12,7 +12,6 @@ const FALLBACK_NAV = [
   { label: 'Membership', linkType: 'custom' as const, customPath: '/membership' },
   { label: 'Tests', linkType: 'custom' as const, customPath: '/tests-passed' },
   { label: 'About', linkType: 'custom' as const, customPath: '/about' },
-  { label: 'Contact', linkType: 'custom' as const, customPath: '/contact' },
   { label: 'Donate', linkType: 'custom' as const, customPath: '/donate', highlightButton: true },
 ];
 

@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
 } from '@sanity/ui'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useClient } from 'sanity'
 import { useIntentLink } from 'sanity/router'
 
@@ -52,8 +52,10 @@ export default function ManageContentTool() {
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const searchRequestId = useRef(0)
 
   const runSearch = useCallback(async () => {
+    const requestId = ++searchRequestId.current
     setLoading(true)
     setError(null)
     try {
@@ -66,7 +68,7 @@ export default function ManageContentTool() {
           }`,
           { q }
         )
-        setRows(result)
+        if (requestId === searchRequestId.current) setRows(result)
       } else {
         const result = await client.fetch<PageRow[]>(
           `*[_type == "page" && ($q == "**" || title match $q || slug.current match $q)]
@@ -75,12 +77,14 @@ export default function ManageContentTool() {
           }`,
           { q }
         )
-        setRows(result)
+        if (requestId === searchRequestId.current) setRows(result)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      if (requestId === searchRequestId.current) {
+        setError(err instanceof Error ? err.message : String(err))
+      }
     } finally {
-      setLoading(false)
+      if (requestId === searchRequestId.current) setLoading(false)
     }
   }, [client, docType, query])
 
@@ -138,7 +142,12 @@ export default function ManageContentTool() {
                   <Text size={1} weight="semibold">Content type</Text>
                   <Select
                     value={docType}
-                    onChange={(e) => setDocType(e.currentTarget.value as DocType)}
+                    onChange={(e) => {
+                      searchRequestId.current += 1
+                      setRows([])
+                      setLoading(false)
+                      setDocType(e.currentTarget.value as DocType)
+                    }}
                   >
                     {TYPE_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.title}</option>
@@ -152,7 +161,12 @@ export default function ManageContentTool() {
                   <TextInput
                     placeholder={docType === 'testPassed' ? 'Skater name or test level…' : 'Title or slug…'}
                     value={query}
-                    onChange={(e) => setQuery(e.currentTarget.value)}
+                    onChange={(e) => {
+                      searchRequestId.current += 1
+                      setRows([])
+                      setLoading(false)
+                      setQuery(e.currentTarget.value)
+                    }}
                     onKeyDown={(e) => e.key === 'Enter' && runSearch()}
                   />
                 </Stack>

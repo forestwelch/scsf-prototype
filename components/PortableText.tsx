@@ -1,4 +1,5 @@
 import { PortableText as SanityPortableText } from '@portabletext/react';
+import type { ReactNode } from 'react';
 import { urlFor } from '@/sanity/lib/image';
 
 interface PortableTextProps {
@@ -27,6 +28,19 @@ const components = {
         </figure>
       );
     },
+    file: ({ value }: any) => {
+      const fileUrl = value?.asset?.url;
+      if (!fileUrl) return null;
+      return (
+        <figure className="my-6">
+          {value.caption && <figcaption className="mb-2 text-sm font-semibold text-gray-700">{value.caption}</figcaption>}
+          <iframe title={value.caption || 'PDF document'} src={fileUrl} className="w-full h-[75vh] min-h-[32rem] rounded-lg border border-gray-200" />
+          <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-brand-bridge-orange hover:underline">
+            Open PDF in a new tab
+          </a>
+        </figure>
+      );
+    },
     embed: ({ value }: any) => {
       if (!value?.url) return null;
       return (
@@ -48,7 +62,35 @@ const components = {
     h2: ({ children }: any) => <h2 className="text-3xl font-bold mb-3 mt-5">{children}</h2>,
     h3: ({ children }: any) => <h3 className="text-2xl font-semibold mb-2 mt-4">{children}</h3>,
     h4: ({ children }: any) => <h4 className="text-xl font-semibold mb-2 mt-3">{children}</h4>,
-    normal: ({ children }: any) => <p className="mb-4 text-gray-700 leading-relaxed">{children}</p>,
+    normal: ({ children, value }: any) => {
+      const sourceText = value?.children?.map((child: any) => child.text || '').join('') || '';
+      const shortcodePattern = /\[pdf-embedder\s+url="(https:\/\/[^\"]+)"(?:\s+title="([^\"]*)")?[^\]]*\]/gi;
+      if (!shortcodePattern.test(sourceText)) {
+        return <p className="mb-4 text-gray-700 leading-relaxed">{children}</p>;
+      }
+
+      shortcodePattern.lastIndex = 0;
+      const rendered: ReactNode[] = [];
+      let lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = shortcodePattern.exec(sourceText)) !== null) {
+        const surroundingText = sourceText.slice(lastIndex, match.index).trim();
+        if (surroundingText) rendered.push(<p key={`text-${lastIndex}`} className="mb-4 text-gray-700 leading-relaxed">{surroundingText}</p>);
+        const pdfUrl = match[1];
+        const title = match[2] || 'PDF document';
+        rendered.push(
+          <figure key={`pdf-${match.index}`} className="my-6">
+            <figcaption className="mb-2 text-sm font-semibold text-gray-700">{title}</figcaption>
+            <iframe title={title} src={pdfUrl} className="w-full h-[75vh] min-h-[32rem] rounded-lg border border-gray-200" />
+            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-brand-bridge-orange hover:underline">Open PDF in a new tab</a>
+          </figure>
+        );
+        lastIndex = shortcodePattern.lastIndex;
+      }
+      const tail = sourceText.slice(lastIndex).trim();
+      if (tail) rendered.push(<p key={`text-${lastIndex}`} className="mb-4 text-gray-700 leading-relaxed">{tail}</p>);
+      return <>{rendered}</>;
+    },
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-brand-bridge-orange pl-4 italic my-4 text-gray-700">
         {children}

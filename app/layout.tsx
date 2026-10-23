@@ -2,6 +2,8 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Script from "next/script";
+import { getSiteSettings } from "@/lib/sanity.queries";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,11 +23,14 @@ export const metadata = {
 // published changes go live within a minute without needing a deploy.
 export const revalidate = 60;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
+  const analyticsId = settings.googleAnalyticsId?.match(/^G-[A-Z0-9]+$/)?.[0];
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} antialiased`}>
@@ -34,6 +39,14 @@ export default function RootLayout({
           <main className="flex-grow">{children}</main>
           <Footer />
         </div>
+        {analyticsId && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`} strategy="afterInteractive" />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', ${JSON.stringify(analyticsId)});`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

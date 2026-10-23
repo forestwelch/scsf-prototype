@@ -13,6 +13,7 @@ export default async function Footer() {
   const vStreet   = s.venueStreet ?? '750 Folsom St.';
   const vCity     = s.venueCityStateZip ?? 'San Francisco, CA 94107';
   const vPhone    = s.venuePhone ?? '(415) 820-3521';
+  const webmasterEmail = s.webmasterEmail || 'webmaster@scsf.org';
   const fbUrl     = s.facebookUrl ?? 'https://www.facebook.com/scsf.org/';
   const igUrl     = s.instagramUrl ?? 'https://www.instagram.com/explore/tags/skatingclubofsanfrancisco/';
   const eeUrl     = s.entryEezeUrl ?? 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189';
@@ -30,6 +31,7 @@ export default async function Footer() {
               <p>{orgName}</p>
               <p>{poBox}</p>
               <p>{mailCity}</p>
+              <p><a href={`mailto:${webmasterEmail}`} className="text-brand-golden-yellow hover:underline">{webmasterEmail}</a></p>
             </address>
             <div className="mt-4">
               <h4 className="font-semibold mb-1">{venue}</h4>

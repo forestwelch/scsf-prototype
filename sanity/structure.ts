@@ -1,4 +1,5 @@
 import type {StructureResolver} from 'sanity/structure'
+import {apiVersion} from './env'
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 //
@@ -49,6 +50,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('testPassed')
                     .title('Skating Skills')
                     .filter('_type == "testPassed" && testType == "moves"')
+                    .apiVersion(apiVersion)
                 ),
               S.listItem()
                 .title('Singles')
@@ -56,6 +58,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('testPassed')
                     .title('Singles')
                     .filter('_type == "testPassed" && testType == "freeskate"')
+                    .apiVersion(apiVersion)
                 ),
               S.listItem()
                 .title('Dance')
@@ -63,6 +66,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('testPassed')
                     .title('Dance')
                     .filter('_type == "testPassed" && testType == "dance"')
+                    .apiVersion(apiVersion)
                 ),
             ])
         ),

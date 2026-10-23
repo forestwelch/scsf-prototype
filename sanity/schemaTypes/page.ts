@@ -5,6 +5,15 @@ export default defineType({
   title: "Pages",
   type: "document",
   fields: [
+    // Kept hidden for compatibility with the legacy WordPress import. Navigation
+    // is now managed in the dedicated Navigation singleton; this old value is
+    // intentionally not presented as an active editor control.
+    defineField({
+      name: "showInNav",
+      title: "Legacy show in navigation flag",
+      type: "boolean",
+      hidden: true,
+    }),
     defineField({
       name: "title",
       title: "Title",
@@ -44,6 +53,18 @@ export default defineType({
               title: "Caption (optional)",
               type: "string",
               description: "Shown below the image on the page, if filled in.",
+            }),
+          ],
+        },
+        {
+          type: "file",
+          options: {accept: "application/pdf"},
+          fields: [
+            defineField({
+              name: "caption",
+              title: "Caption",
+              type: "string",
+              description: "Shown above the PDF viewer.",
             }),
           ],
         },

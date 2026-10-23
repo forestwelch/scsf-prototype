@@ -1,6 +1,6 @@
 import Container from '@/components/Container';
 import EventCard from '@/components/EventCard';
-import { getAllEvents } from '@/lib/sanity.queries';
+import { getAllEvents, getSiteSettings } from '@/lib/sanity.queries';
 
 export const metadata = {
   title: 'Events | Skating Club of San Francisco',
@@ -15,7 +15,7 @@ const eventTypeLabels: Record<string, string> = {
 };
 
 export default async function EventsPage() {
-  const allEvents = await getAllEvents();
+  const [allEvents, settings] = await Promise.all([getAllEvents(), getSiteSettings()]);
   const now = new Date().toISOString();
 
   const upcoming = allEvents.filter((e) => e.startDate >= now);
@@ -26,9 +26,9 @@ export default async function EventsPage() {
       {/* Page Header */}
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Events</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{settings.eventsPageTitle || 'Events'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Galas, competitions, test sessions, and club events. Mark your calendars and join us on the ice.
+            {settings.eventsPageIntro || 'Galas, competitions, test sessions, and club events. Mark your calendars and join us on the ice.'}
           </p>
         </Container>
       </div>
