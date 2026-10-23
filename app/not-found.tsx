@@ -13,7 +13,7 @@ export default function NotFound() {
             Page not found
           </h1>
           <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
-            We couldn't find that page. It may have moved, or you may have followed an outdated link.
+            We couldn&apos;t find that page. It may have moved, or you may have followed an outdated link.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

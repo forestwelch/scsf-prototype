@@ -1,7 +1,7 @@
 # SCSF Website
 
 The Skating Club of San Francisco's website. Built with Next.js and Sanity CMS,
-replacing the old scsf.org WordPress site. Deployed on Vercel.
+replacing the old scsf.org WordPress site. Deployment is managed through Vercel.
 
 This README is written for two audiences: developers setting up the project,
 and non-technical editors (board members, coaches) who just need to update
@@ -13,11 +13,10 @@ and the **[FAQ](#faq)** below — you don't need to touch the code at all.
 
 ## What lives in Sanity vs. what lives in code
 
-This is the single most important thing to understand about this project.
-The goal is: **anything a non-technical editor needs to change lives in
-Sanity Studio, not in code.** If you find yourself needing a developer to
-change text, a link, an image, or the menu — that's a bug, tell us and we'll
-move it into Sanity.
+Most reusable content records are edited in Sanity Studio. Some fixed-route
+pages and page layouts are still maintained in code. If the content you need
+to change has no corresponding Studio field, it currently requires a code
+change.
 
 ### Lives in Sanity (edit at `/studio`, no code, no deploy needed)
 
@@ -25,7 +24,7 @@ move it into Sanity.
 |---|---|
 | Site-wide settings: address, phone, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Site Settings** (pinned at top) |
 | The navigation menu — order, labels, links, dropdowns, the Donate button | **Navigation** (pinned at top) |
-| All page content — About, Membership, Ice Theatre, policies, etc., including images | **Pages** |
+| Generic pages such as Ice Theatre and policy pages, including rich text, images, and embeds | **Pages** or **Manage Content** |
 | News posts | **Announcements** |
 | Events (gala, competitions, test sessions) | **Events** |
 | Tests passed records, incl. Honors/Distinction | **Tests Passed** |
@@ -33,7 +32,13 @@ move it into Sanity.
 | Board members | **Board Members** |
 | FAQs | **FAQs** |
 | Homepage hero slides | **Hero Slides** |
-| Membership category pricing/details | **Membership Categories** |
+| Membership category cards (names, prices, eligibility, features) | **Membership Categories** |
+
+The About, Membership, Programs, and other fixed routes have page copy and
+layout in code. Some parts of those routes use Sanity data: for example, the
+About page reads Board Members and Site Settings, while the Membership page
+reads Membership Categories. A generic Pages document does not replace the
+code for one of these fixed routes.
 
 ### Lives in code (requires a developer + deploy)
 
@@ -57,48 +62,61 @@ Studio → **Navigation** (pinned at the top of the sidebar, above the divider).
 It's one document with a list of menu items. Drag the handle on the left of
 each item to reorder. Click into an item to edit its label or link, or to
 add/remove dropdown sub-items. Changes go live as soon as you publish — no
-code, no deploy.
+code or deploy. The site may take up to about a minute to refresh published
+content.
 
 **Q: I created a new page. Why isn't it in the menu?**
-Creating a page (Studio → Pages → "+") makes it live at `yoursite.com/its-slug`
-automatically, but it does **not** automatically add itself to the nav menu.
+Create a page in Studio → **Manage Content** → **Add page**, then publish it.
+Once published, it is available at `yoursite.com/its-slug` (the site may take
+up to about a minute to refresh). It does **not** automatically add itself to the nav menu.
 That's a deliberate two-step: not every page needs to be in the main menu
 (e.g. a page only linked from another page). To add it to the menu, go to
 Studio → **Navigation** → add a new item → set its link type to "Sanity Page"
 → pick your page from the list.
+Choose a slug that does not conflict with an existing fixed route such as
+`/about` or `/membership`; those routes are implemented in code.
 
 **Q: How do I delete a page?**
-Studio → Pages → open the page → the "..." menu → Delete (or unpublish, if
-you want to keep a draft). This removes the live route immediately. If that
-page was linked in the Navigation menu, you'll want to also remove that link
-in Studio → Navigation, or visitors will click through to a 404.
+Studio → **Manage Content** → choose Pages → search for the page → Delete.
+Confirm the page title before deletion. This permanently removes the page and
+its draft; if it was linked in Navigation, remove that menu link too. Use the
+Edit action in Manage Content to open the page's full editor.
+
+**Q: How do I add or edit a page or a Tests Passed record?**
+Studio → **Manage Content** → choose Pages or Tests Passed. Use **Add page** or
+**Add test record** to open Sanity's full editor. Search for an existing item
+and choose **Edit** to update it. The spreadsheet importer remains available
+for adding a batch of Tests Passed records.
 
 **Q: Where's the Zeffy donation/newsletter embed link?**
-Studio → **Site Settings** → "Zeffy Donate Form Embed URL" (used on `/donate`)
-and "Zeffy Newsletter Signup Embed URL." Paste the `src` URL from Zeffy's
-embed code (not the full `<iframe>` HTML, just the URL). No code change
-needed — the donate/newsletter pages read this value automatically.
+Studio → **Site Settings** → edit **Zeffy Donate Form Embed URL** or
+**Zeffy Newsletter Signup Embed URL**. Paste the `src` URL from Zeffy's embed
+code (not the full `<iframe>` HTML). These fixed fields supply the Donate and
+newsletter archive pages. For an embed inside another page, add an Embed
+block to that page's Content field instead.
 
 **Q: How do I add or edit images on a page?**
-Open the page in Studio → click into the Content field → click the "+" button
-below any paragraph → choose "Image" → drag a file in or click to upload.
-Add alt text (for accessibility/SEO) and an optional caption. Drag the image
-block up or down in the content list to move it. This works on Pages,
-Announcements, and Events.
+Open the page in Studio and use the **Image** action in the Content editor
+toolbar. Drag a file in or choose one to upload, then add alt text (for
+accessibility/SEO) and an optional caption. Reorder content blocks in the
+editor. This works on Pages, Announcements, and Events.
 
 **Q: How does "With Honors" / "With Distinction" work on Tests Passed?**
-Each test record in Studio → Tests Passed has a "Distinction" field: None,
+Each test record is available from Studio → **Manage Content** → Tests Passed
+and has a "Distinction" field: None,
 With Honors (`*`), or With Distinction (`**`). Set it per record. The
-`/tests-passed` page automatically shows the marker next to the test name and
+`/tests-passed` page automatically shows the marker next to the test level and
 a legend key, but only for years/records that actually have one set — no
 legend clutter on records with nothing to flag.
 
-**Q: How do bulk imports of tests passed work?**
-See `scripts/migrate-tests-passed.mjs` — pulls the official tests-passed pages
-directly from scsf.org's WordPress API and imports them as Sanity records,
-safe to re-run (it updates existing records rather than duplicating them). A
-spreadsheet-upload flow for one-off batches (e.g. from the club secretary) is
-planned but not yet built — see open items below.
+**Q: How do bulk imports of Tests Passed work?**
+Studio → **Import Tests Passed** accepts `.xlsx` and `.xls` spreadsheets with
+Skater and Test Name columns. Review the parsed rows, correct test types or
+exclude rows as needed, choose the session month/year, then import. Re-importing
+the same rows with the same types and session month/year updates those imported
+records. The
+historical `scripts/migrate-tests-passed.mjs` script imports data from the old
+WordPress site; it is not the normal workflow for new batches.
 
 **Q: What if a page is missing images that the old WordPress site had?**
 Run `scripts/backfill-page-images.mjs <page-slug>` — it pulls every image off
@@ -108,9 +126,9 @@ text). Then go into Studio and drag the new images into position. Safe to
 re-run; it won't create duplicates.
 
 **Q: Something changed in code — how do I see it live?**
-Any code change needs to be committed, pushed, and deployed via Vercel (see
-Deployment below). Sanity content changes are live immediately on publish —
-no deploy needed.
+Any code change needs to be committed, pushed, and deployed (see Deployment
+below for how to check the Vercel setup). Published Sanity content usually
+appears on the site within about a minute — no code deploy is needed.
 
 ---
 
@@ -118,8 +136,9 @@ no deploy needed.
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) (this project uses `bun`, not npm/yarn — there's a
-  `bun.lock` file, not a `package-lock.json`)
+- [Bun](https://bun.sh) and Node.js 20.9 or newer (required by Next.js 16)
+- Use Bun for installs and scripts. The repository has both `bun.lock` and
+  `package-lock.json`; avoid mixing package managers in one checkout.
 - A Sanity account with access to this project (ask an existing collaborator
   to invite you at [sanity.io/manage](https://sanity.io/manage))
 
@@ -131,18 +150,16 @@ cd scsf-prototype
 bun install
 ```
 
-Copy `.env.local.example` if one exists, or create `.env.local` with:
+Create `.env.local` in the project root with:
 
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID=xi18pbe1
 NEXT_PUBLIC_SANITY_DATASET=production
-NEXT_PUBLIC_SANITY_TOKEN=<your Sanity API token, Editor role>
+SANITY_TOKEN=<your Sanity API token, Editor role; only for migration scripts>
 
-# Only needed for one-off scripts in scripts/, not for running the site itself
-SANITY_TOKEN=<same token as above>
+# Only needed by selected migration scripts
 WP_USERNAME=<only if you need to pull unpublished/archived WP content>
 WP_APP_PASSWORD=<same>
-BLOB_STORE_ID=<Vercel Blob store id, only needed for asset migration scripts>
 BLOB_READ_WRITE_TOKEN=<Vercel Blob token, same>
 ```
 
@@ -157,8 +174,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) for the site, and
 [http://localhost:3000/studio](http://localhost:3000/studio) for Sanity
-Studio (content editing) running locally against the same live dataset —
-edits there affect the real production content, same as the hosted studio.
+Studio. Local Studio uses the configured dataset; the example above points to
+`production`, so edits and published changes affect live content. Use a
+separate non-production dataset for write testing. Studio sign-in uses your
+Sanity account; the API token above is for scripts, not browser sign-in.
 
 ### Other commands
 
@@ -170,50 +189,47 @@ bun run start   # serve the production build locally
 
 ---
 
-## Working with this codebase using Claude / Cowork
+## Working with this codebase using an AI coding assistant
 
-This project is set up to be worked on with an AI coding assistant (Claude
-Code or Cowork) rather than requiring you to write code by hand.
+You can use an AI coding assistant to make code or content-model changes.
 
 1. **Get the code onto your machine.** Either clone the repo yourself
    (`git clone <repo-url>`), or open the project folder if it's already been
    shared with you (e.g. via Cowork's folder selection).
-2. **Open Claude in this folder.**
-   - In **Claude Code** (terminal): `cd` into the project folder and run
-     `claude`.
-   - In **Cowork**: select this folder as your working folder when starting a
-     session.
+2. **Open your coding assistant in this folder.** For example, start Claude
+   Code from the terminal or open the folder in Codex.
 3. **Describe what you want in plain English.** You don't need to know how
    to code. Examples that work well:
    - *"Add a field to the coach schema for their PSA certification level."*
    - *"The membership page is missing a photo, can you pull one over from the
      old wordpress site?"*
    - *"Why does the donate page look broken?"*
-4. **Review what changes.** Claude will explain what it changed and why
-   before/after making edits. If it's proposing a code change, it's a good
+4. **Review the proposed changes.** The assistant should explain what it
+   changed and why. If it's proposing a code change, it's a good
    idea to run `bun run build` (or ask Claude to) to confirm nothing broke
    before pushing.
-5. **Commit and push** — either ask Claude to do it, or do it yourself:
+5. **Commit and push** — either ask your assistant to do it, or do it yourself:
    ```bash
    git add -A
    git commit -m "describe the change"
    git push
    ```
-   Pushing to the main branch triggers a Vercel deploy automatically (see
-   below).
+   Check the Deployment section below to confirm whether the `main` branch is
+   connected to automatic deploys.
 
-If a request is really a Sanity content change (see the table above), Claude
-will usually just tell you where to go in Studio instead of touching code —
+If a request is really a Sanity content change (see the table above), your
+assistant will usually point you to Studio instead of changing code —
 that's expected, not a limitation.
 
 ---
 
 ## Deployment
 
-This project auto-deploys to [Vercel](https://vercel.com) on every push to
-the main branch. No manual deploy step needed. Check the Vercel dashboard for
-build status/logs if a deploy fails — most failures are TypeScript errors,
-which `bun run build` will also catch locally before you push.
+This repository does not contain a deployment workflow, so deployment behavior
+depends on the external Vercel project configuration. Check the Vercel project
+to confirm whether pushes to `main` deploy automatically and to view build
+status or logs. Run `bun run build` locally before pushing to catch build and
+TypeScript errors.
 
 ---
 
@@ -237,10 +253,8 @@ scripts/                One-off migration/import scripts (WordPress → Sanity, 
 
 ## Open items (as of this writing)
 
-- **Bulk spreadsheet upload for Tests Passed** — so a spreadsheet (e.g. from
-  Diane) can be uploaded and imported without a developer running a script.
-  Stretch goal: read directly from a shared Google Doc/Sheet on a manual
-  trigger.
+- **Confirm Vercel deployment settings** — the repository does not define the
+  external Vercel project or its production branch settings.
 - **Site-wide old-vs-new content audit** — systematically compare every page
   against the old scsf.org to catch anything else missing beyond images
   (Ice Theatre was the first one found and fixed).

@@ -12,6 +12,7 @@ import {
 } from '@sanity/ui'
 import { useCallback, useEffect, useState } from 'react'
 import { useClient } from 'sanity'
+import { useIntentLink } from 'sanity/router'
 
 type DocType = 'testPassed' | 'page'
 
@@ -35,8 +36,14 @@ const TYPE_OPTIONS: { value: DocType; title: string }[] = [
   { value: 'page', title: 'Pages' },
 ]
 
+const TEST_TYPE_LABELS: Record<string, string> = {
+  moves: 'Skating Skills',
+  freeskate: 'Singles',
+  dance: 'Dance',
+}
+
 export default function ManageContentTool() {
-  const client = useClient({ apiVersion: '2024-01-01' })
+  const client = useClient({ apiVersion: '2026-01-14' }).withConfig({perspective: 'drafts'})
 
   const [docType, setDocType] = useState<DocType>('testPassed')
   const [query, setQuery] = useState('')
@@ -78,22 +85,28 @@ export default function ManageContentTool() {
   }, [client, docType, query])
 
   useEffect(() => {
+    // Search when the selected content type changes; the async result updates the view.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     runSearch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docType])
 
   const handleDelete = useCallback(
     async (id: string, label: string) => {
-      if (!window.confirm(`Permanently delete "${label}"? This can't be undone.`)) return
-      setDeletingId(id)
+      const baseId = id.replace(/^drafts\./, '')
+      const pageWarning = docType === 'page'
+        ? ' If this page is linked from Navigation, remove that menu link too.'
+        : ''
+      if (!window.confirm(`Permanently delete "${label}"? This can't be undone.${pageWarning}`)) return
+      setDeletingId(baseId)
       setMessage(null)
       setError(null)
       try {
         // Delete both the published document and any unpublished draft of it —
         // whichever exists. Sanity's delete mutation is a no-op for an id that
         // doesn't exist, so this is safe to run unconditionally.
-        await client.transaction().delete(id).delete(`drafts.${id}`).commit()
-        setRows((prev) => prev.filter((r) => r._id !== id))
+        await client.transaction().delete(baseId).delete(`drafts.${baseId}`).commit()
+        setRows((prev) => prev.filter((r) => r._id.replace(/^drafts\./, '') !== baseId))
         setMessage(`Deleted "${label}".`)
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err))
@@ -101,7 +114,7 @@ export default function ManageContentTool() {
         setDeletingId(null)
       }
     },
-    [client]
+    [client, docType]
   )
 
   return (
@@ -110,11 +123,11 @@ export default function ManageContentTool() {
         <Stack space={5}>
           <Stack space={3}>
             <Text size={3} weight="bold">
-              Delete Content
+              Manage Content
             </Text>
             <Text size={1} muted>
-              Search for a Tests Passed record or a Page and delete it directly. Use this if the
-              normal Delete option in a document&apos;s menu isn&apos;t showing up for you.
+              Add and edit using Sanity&apos;s full document editor, or search here to find and remove
+              pages and Tests Passed records. This also works around the missing native Delete action.
             </Text>
           </Stack>
 
@@ -144,7 +157,10 @@ export default function ManageContentTool() {
                   />
                 </Stack>
               </Box>
-              <Button text="Search" tone="primary" onClick={runSearch} disabled={loading} />
+              <Flex gap={2} align="center">
+                <CreateButton docType={docType} />
+                <Button text="Search" tone="primary" onClick={runSearch} disabled={loading} />
+              </Flex>
             </Flex>
           </Card>
 
@@ -177,6 +193,7 @@ export default function ManageContentTool() {
                     </>
                   )}
                   <th style={headerCellStyle}></th>
+                  <th style={headerCellStyle}></th>
                 </tr>
               </thead>
               <tbody>
@@ -185,8 +202,17 @@ export default function ManageContentTool() {
                     {docType === 'testPassed' ? (
                       <>
                         <td style={cellStyle}><Text size={1}>{(row as TestPassedRow).skaterName}</Text></td>
-                        <td style={cellStyle}><Text size={1}>{(row as TestPassedRow).testLevel}</Text></td>
-                        <td style={cellStyle}><Badge tone="default">{(row as TestPassedRow).testType}</Badge></td>
+                        <td style={cellStyle}>
+                          <Text size={1}>
+                            {(row as TestPassedRow).testLevel}
+                            {(row as TestPassedRow).distinction === 'honors' ? ' *' : (row as TestPassedRow).distinction === 'distinction' ? ' **' : ''}
+                          </Text>
+                        </td>
+                        <td style={cellStyle}>
+                          <Badge tone="default">
+                            {TEST_TYPE_LABELS[(row as TestPassedRow).testType] ?? (row as TestPassedRow).testType}
+                          </Badge>
+                        </td>
                         <td style={cellStyle}><Text size={1} muted>{(row as TestPassedRow).passedDate}</Text></td>
                       </>
                     ) : (
@@ -196,12 +222,15 @@ export default function ManageContentTool() {
                       </>
                     )}
                     <td style={{ ...cellStyle, textAlign: 'right' }}>
+                      <EditButton docType={docType} id={row._id.replace(/^drafts\./, '')} />
+                    </td>
+                    <td style={{ ...cellStyle, textAlign: 'right' }}>
                       <Button
-                        text={deletingId === row._id ? 'Deleting…' : 'Delete'}
+                        text={deletingId === row._id.replace(/^drafts\./, '') ? 'Deleting…' : 'Delete'}
                         tone="critical"
                         mode="ghost"
                         fontSize={1}
-                        disabled={deletingId === row._id}
+                        disabled={deletingId === row._id.replace(/^drafts\./, '')}
                         onClick={() =>
                           handleDelete(
                             row._id,
@@ -216,7 +245,7 @@ export default function ManageContentTool() {
                 ))}
                 {rows.length === 0 && !loading && (
                   <tr>
-                    <td colSpan={4} style={cellStyle}>
+                    <td colSpan={docType === 'testPassed' ? 6 : 4} style={cellStyle}>
                       <Text size={1} muted>No results.</Text>
                     </td>
                   </tr>
@@ -228,6 +257,16 @@ export default function ManageContentTool() {
       </Container>
     </Card>
   )
+}
+
+function CreateButton({docType}: {docType: DocType}) {
+  const {href, onClick} = useIntentLink({intent: 'create', params: {type: docType}})
+  return <Button as="a" href={href} onClick={onClick} text={docType === 'page' ? 'Add page' : 'Add test record'} tone="positive" />
+}
+
+function EditButton({docType, id}: {docType: DocType; id: string}) {
+  const {href, onClick} = useIntentLink({intent: 'edit', params: {id, type: docType}})
+  return <Button as="a" href={href} onClick={onClick} text="Edit" mode="ghost" fontSize={1} />
 }
 
 const cellStyle: React.CSSProperties = {

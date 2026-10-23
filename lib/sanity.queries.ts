@@ -19,6 +19,8 @@ export interface SiteSettings {
   venuePhone?: string;
   facebookUrl?: string;
   instagramUrl?: string;
+  zeffyDonateUrl?: string;
+  zeffyNewsletterUrl?: string;
   embeds?: SiteEmbed[];
   mailchimpArchiveUrl?: string;
   currentNewsletterUrl?: string;
@@ -34,7 +36,20 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 /** Find a named embed from Site Settings by its "key" (e.g. "donate-form"). */
 export function findEmbed(settings: SiteSettings, key: string): SiteEmbed | undefined {
-  return settings.embeds?.find((e) => e.key === key);
+  const configuredEmbed = settings.embeds?.find((e) => e.key === key);
+  if (configuredEmbed) return configuredEmbed;
+
+  // Preserve the existing Site Settings singleton fields while older data is
+  // still stored outside the generic embeds array.
+  const legacyEmbeds: Record<string, SiteEmbed | undefined> = {
+    'donate-form': settings.zeffyDonateUrl
+      ? {key: 'donate-form', label: 'Zeffy Donate Form', url: settings.zeffyDonateUrl}
+      : undefined,
+    'newsletter-signup': settings.zeffyNewsletterUrl
+      ? {key: 'newsletter-signup', label: 'Zeffy Newsletter Signup', url: settings.zeffyNewsletterUrl}
+      : undefined,
+  };
+  return legacyEmbeds[key];
 }
 
 // ─── Hero Slides ─────────────────────────────────────────────────────────────

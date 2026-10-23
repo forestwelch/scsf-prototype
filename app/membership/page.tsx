@@ -142,7 +142,7 @@ export default async function MembershipPage() {
           <div id="conduct" className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-bold text-brand-charcoal mb-3">Code of Conduct</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
-              All SCSF members must abide by the Club's Code of Conduct, upholding respectful behavior on and off the
+              All SCSF members must abide by the Club&apos;s Code of Conduct, upholding respectful behavior on and off the
               ice for skaters, coaches, parents, and officials.
             </p>
             <Link href="/code-of-conduct" className="text-brand-bridge-orange hover:underline font-medium text-sm">
@@ -152,7 +152,7 @@ export default async function MembershipPage() {
           <div id="skatesafe" className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-bold text-brand-charcoal mb-3">SkateSafe / SafeSport</h2>
             <p className="text-gray-700 text-sm leading-relaxed mb-4">
-              SCSF supports US Figure Skating's SkateSafe program to ensure all members have a safe skating
+              SCSF supports US Figure Skating&apos;s SkateSafe program to ensure all members have a safe skating
               environment, in compliance with the US Olympic Committee.
             </p>
             <Link href="/skatesafe-statement" className="text-brand-bridge-orange hover:underline font-medium text-sm">

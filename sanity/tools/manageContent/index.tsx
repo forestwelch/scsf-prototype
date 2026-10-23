@@ -1,4 +1,4 @@
-import { TrashIcon } from '@sanity/icons'
+import { EditIcon } from '@sanity/icons'
 import type { Tool } from 'sanity'
 
 import ManageContentTool from './ManageContentTool'
@@ -6,8 +6,8 @@ import ManageContentTool from './ManageContentTool'
 export function manageContentTool(): Tool {
   return {
     name: 'manage-content',
-    title: 'Delete Content',
-    icon: TrashIcon,
+    title: 'Manage Content',
+    icon: EditIcon,
     component: ManageContentTool,
   }
 }

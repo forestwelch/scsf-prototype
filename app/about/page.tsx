@@ -112,8 +112,8 @@ export default async function AboutPage() {
               <h3 className="text-xl font-semibold text-brand-charcoal mb-3">The Origin (1932)</h3>
               <p className="text-gray-700 leading-relaxed">
                 In the fall of 1932, a group of winter sports enthusiasts assembled by Alex Young, Jr. organized the
-                Skate and Ski Club of San Francisco, for the "purpose of promoting and fostering an interest in the art
-                of skating and winter sports." The first season saw a membership of 106, skating at New Iceland on Sutter
+                Skate and Ski Club of San Francisco, for the &quot;purpose of promoting and fostering an interest in the art
+                of skating and winter sports.&quot; The first season saw a membership of 106, skating at New Iceland on Sutter
                 and Pierce Streets in San Francisco.
               </p>
               <p className="text-gray-700 leading-relaxed mt-3">
@@ -124,9 +124,9 @@ export default async function AboutPage() {
             <div>
               <h3 className="text-xl font-semibold text-brand-charcoal mb-3">Incorporation (1938)</h3>
               <p className="text-gray-700 leading-relaxed">
-                After years of nomadic skating across San Francisco's various rinks, the club secured sessions at Sutro Baths
+                After years of nomadic skating across San Francisco&apos;s various rinks, the club secured sessions at Sutro Baths
                 starting October 5, 1938. With legal help from Lemuel H. Matthews, the incorporation of the club as a non-profit
-                corporation became effective November 22, 1938. The club's first USFSA sanctioned carnival took place at
+                corporation became effective November 22, 1938. The club&apos;s first USFSA sanctioned carnival took place at
                 Sutro Baths on December 19, 1938.
               </p>
             </div>
@@ -139,7 +139,7 @@ export default async function AboutPage() {
               </p>
             </div>
             <p className="text-sm text-gray-500 italic pt-2">
-              History sourced from "The Inside Edge" newsletter archives, including a 1972 article by John Rogers
+              History sourced from &quot;The Inside Edge&quot; newsletter archives, including a 1972 article by John Rogers
               with contributions from Rebecca Hurst and George Stiles.
             </p>
           </div>

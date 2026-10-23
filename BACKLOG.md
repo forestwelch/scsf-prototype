@@ -25,6 +25,20 @@ then net-new features.
 
 ## Done
 
+- **2026-10-23** — Browser-tested Pages and Tests Passed create, edit, publish,
+  and delete flows against a disposable Sanity dataset, including deletion of a
+  record with an unpublished draft. Tested spreadsheet parsing, row exclusion,
+  distinctions, date selection, import, and repeat-import deduplication. Removed
+  all synthetic documents afterward.
+- **2026-10-23** — Added a Manage Content Studio tool for Pages and Tests Passed:
+  create and edit links open the full Sanity document editor; search includes
+  drafts; deletion removes published and draft documents after confirmation.
+  Updated editor documentation to point to the working workflow.
+- **2026-10-23** — Audited README instructions against the signed-in Studio and
+  local site. Exposed the already-stored Zeffy URLs in the Site Settings schema
+  and kept Donate/newsletter pages reading those values. Corrected stale setup,
+  content ownership, import, and refresh-timing guidance.
+
 - **2026-09-14** — Tests Passed cleanup batch:
   1. Deleted 46 duplicate `2026-06-30` testPassed records (exact dupes of the
      `2026-06-01` batch) + 1 stray unpublished draft, from production.
@@ -49,10 +63,11 @@ then net-new features.
 
 ## Where things live in Studio
 
-- **Delete a Tests Passed record or a Page**: top nav → **Delete Content**
-  tool (next to Import Tests Passed). Pick the content type, search, hit
-  Delete. This exists because Studio's native Delete action isn't rendering
-  for anyone on this project — see the Open item above.
+- **Add, edit, or delete a Tests Passed record or a Page**: top nav →
+  **Manage Content**. Pick the content type. Add and Edit open the full Sanity
+  document editor; search and Delete find/remove records here because Studio's
+  native Delete action isn't rendering for anyone on this project — see the
+  Open item above.
 - **Edit a single document**: open it from the sidebar and edit fields
   directly — that part works. It's specifically the Delete/Duplicate actions
   (and the whole action footer they'd normally live in) that don't render.

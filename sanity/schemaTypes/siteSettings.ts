@@ -25,13 +25,28 @@ export default defineType({
     defineField({ name: "facebookUrl", title: "Facebook URL", type: "url" }),
     defineField({ name: "instagramUrl", title: "Instagram URL", type: "url" }),
 
+    // These fields already contain the live Zeffy URLs in the production
+    // singleton. Keep them in the schema so editors can update them in Studio.
+    defineField({
+      name: "zeffyDonateUrl",
+      title: "Zeffy Donate Form Embed URL",
+      type: "url",
+      description: "The iframe src URL used by the Donate page.",
+    }),
+    defineField({
+      name: "zeffyNewsletterUrl",
+      title: "Zeffy Newsletter Signup Embed URL",
+      type: "url",
+      description: "The iframe src URL used by the newsletter archive page.",
+    }),
+
     // --- Embeds / external tools ---
     defineField({
       name: "embeds",
       title: "Embeds",
       type: "array",
       description:
-        'Named embeds that plug into specific fixed spots on the site — currently the Donate page ("donate-form") and the newsletter signup form on the newsletter archive page ("newsletter-signup"). To add a NEW embed elsewhere (e.g. a fresh Zeffy form for the gala), you almost always want to add an "Embed" block directly inside that page\'s content instead — use this list only for embeds that live in these fixed, code-defined spots.',
+        'Optional named embeds for code-defined site slots. The dedicated Zeffy fields above are the usual controls for the Donate and newsletter forms; only add a slot override if a developer asks. For a form inside regular page content, use an "Embed" block in that page instead.',
       of: [{ type: "embed" }],
     }),
     defineField({
