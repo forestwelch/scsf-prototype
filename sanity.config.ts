@@ -14,6 +14,7 @@ import { schemaTypes } from "./sanity/schemaTypes";
 import { structure } from "./sanity/structure";
 import { importTestsPassedTool } from "./sanity/tools/importTestsPassed";
 import { managePagesTool, manageTestsPassedTool } from "./sanity/tools/manageContent";
+import { eventsPageDefaults, membershipPageDefaults } from "./lib/membership-page-defaults";
 
 export default defineConfig({
   basePath: "/studio",
@@ -28,7 +29,18 @@ export default defineConfig({
         id: 'sitePageWithRoute',
         title: 'Website page',
         schemaType: 'sitePage',
-        value: (params: {route: string; title: string}) => ({route: params.route, title: params.title}),
+        value: (params: {route: string; title: string}) => {
+          const routeDefaults = params.route === '/membership'
+            ? membershipPageDefaults
+            : params.route === '/events'
+              ? eventsPageDefaults
+              : {}
+          return {
+            ...routeDefaults,
+            route: params.route,
+            title: params.title,
+          }
+        },
       },
     ],
   },

@@ -13,8 +13,8 @@ and the **[FAQ](#faq)** below — you don't need to touch the code at all.
 
 ## What lives in Sanity vs. what lives in code
 
-Open Studio at `/studio`. Editors can also append `/studio` or `/edit` to a
-page URL (for example, `/about/studio`) to open that page's Sanity editor.
+Open Studio at `/studio`. Editors can also append `/studio` to a page URL (for
+example, `/about/studio`) to open that page's Sanity editor.
 Sanity still requires the editor to sign in and have permission to publish.
 Fixed page layouts and interactive features remain implemented in the app.
 
@@ -97,10 +97,9 @@ copy is under Structure → **Pages** → **Website pages**. The spreadsheet
 importer remains available for adding a batch of Tests Passed records.
 
 **Q: Can I open an editor from the page I'm looking at?**
-Yes. While signed in with Sanity access, add `/studio` or `/edit` to the end of
-the page URL, such as `/events/studio`. For event or announcement detail pages,
-the shortcut opens that record. `/studio` by itself opens the Studio home; use
-`/edit` for the website home page.
+Yes. While signed in with Sanity access, add `/studio` to the end of the page
+URL, such as `/events/studio`. For event or announcement detail pages, the
+shortcut opens that record. `/studio` by itself opens the Studio home.
 
 **Q: Where's the Zeffy donation/newsletter embed link?**
 The Donate form URL is under Pages → Website pages → Donate. The Announcements

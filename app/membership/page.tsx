@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getAllMembershipCategories, getSiteSettings, getSitePage } from '@/lib/sanity.queries';
 import SitePageHeader from '@/components/SitePageHeader';
 import SitePageContent from '@/components/SitePageContent';
+import {membershipPageDefaults} from '@/lib/membership-page-defaults';
 
 export const metadata = {
   title: 'Membership | Skating Club of San Francisco',
@@ -16,35 +17,24 @@ export default async function MembershipPage() {
     getSitePage('/membership'),
   ]);
 
-  const entryEezeUrl = settings.entryEezeUrl
-    ?? 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189';
+  const entryEezeUrl = pageCopy?.membershipEntryEezeUrl || settings.entryEezeUrl || membershipPageDefaults.membershipEntryEezeUrl;
   const renewalParagraphs = pageCopy?.membershipRenewalParagraphs?.length
     ? pageCopy.membershipRenewalParagraphs
     : settings.membershipRenewalParagraphs?.length
     ? settings.membershipRenewalParagraphs
-    : [
-      'Membership renewals are processed through EntryEeze. The 2025–26 season begins July 1, 2025. Renew before June 30 to maintain uninterrupted testing and competition eligibility — and to vote in the annual club election.',
-      'New to USFS? Introductory members cannot sign up for tests or competitions until July 1. If you’re already a member, your current membership covers you for testing and competing straight through June 30.',
-    ];
+    : membershipPageDefaults.membershipRenewalParagraphs;
   const renewalChecklist = pageCopy?.membershipRenewalChecklist?.length
     ? pageCopy.membershipRenewalChecklist
     : settings.membershipRenewalChecklist?.length
     ? settings.membershipRenewalChecklist
-    : [
-      'Name spelling matches exactly on both EntryEeze and USFS Members Only',
-      'Phone numbers and email addresses are current',
-      'Your USFS number is entered in your EntryEeze account',
-      "Parent members: you cannot be a parent member if your child's home club is elsewhere",
-    ];
+    : membershipPageDefaults.membershipRenewalChecklist;
   const infoSections = pageCopy?.membershipInfoSections?.length
     ? pageCopy.membershipInfoSections
     : settings.membershipInfoSections?.length
     ? settings.membershipInfoSections
-    : [
-      { _key: 'volunteer', title: 'Volunteer Commitment', text: 'SCSF is entirely volunteer-run. All members are expected to contribute time to club activities — test sessions, competitions, the Annual Gala, and more.', linkLabel: 'Full policy →', linkUrl: '/volunteer-commitment' },
-      { _key: 'conduct', title: 'Code of Conduct', text: "All SCSF members must abide by the Club's Code of Conduct, upholding respectful behavior on and off the ice for skaters, coaches, parents, and officials.", linkLabel: 'View Code of Conduct →', linkUrl: '/code-of-conduct' },
-      { _key: 'skatesafe', title: 'SkateSafe / SafeSport', text: "SCSF supports US Figure Skating's SkateSafe program to ensure all members have a safe skating environment, in compliance with the US Olympic Committee.", linkLabel: 'SkateSafe Statement →', linkUrl: '/skatesafe-statement' },
-    ];
+    : membershipPageDefaults.membershipInfoSections;
+  const newsletterArchiveUrl = pageCopy?.membershipNewsletterArchiveUrl || '/the-inside-edge-newsletter-archive';
+  const questionButtonUrl = pageCopy?.membershipQuestionButtonUrl || '/contact';
 
   return (
     <div className="min-h-screen bg-brand-off-white">
@@ -52,11 +42,11 @@ export default async function MembershipPage() {
           <div className="flex flex-wrap gap-4 mt-6">
             <a href={entryEezeUrl} target="_blank" rel="noopener noreferrer"
               className="bg-brand-golden-yellow text-brand-charcoal px-6 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
-              Join / Renew on EntryEeze →
+              {pageCopy?.membershipJoinButtonLabel || membershipPageDefaults.membershipJoinButtonLabel}
             </a>
             <a href="#categories"
               className="border-2 border-white/60 text-white px-6 py-3 rounded-md font-semibold hover:bg-white/10 transition-colors">
-              View Membership Categories
+              {pageCopy?.membershipCategoriesButtonLabel || membershipPageDefaults.membershipCategoriesButtonLabel}
             </a>
           </div>
       </SitePageHeader>
@@ -65,11 +55,11 @@ export default async function MembershipPage() {
 
         {/* Renewal notice */}
         <section id="join" className="bg-white rounded-lg shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">{pageCopy?.membershipRenewalTitle || settings.membershipRenewalTitle || 'Join or Renew for 2025–26'}</h2>
+          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">{pageCopy?.membershipRenewalTitle || settings.membershipRenewalTitle || membershipPageDefaults.membershipRenewalTitle}</h2>
           <div className="text-gray-700 space-y-4">
             {renewalParagraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
             <div className="bg-brand-golden-yellow/10 border border-brand-golden-yellow/40 rounded-lg p-4">
-              <p className="font-semibold text-brand-charcoal mb-2">When renewing, please verify:</p>
+              <p className="font-semibold text-brand-charcoal mb-2">{pageCopy?.membershipRenewalChecklistHeading || membershipPageDefaults.membershipRenewalChecklistHeading}</p>
               <ul className="text-sm space-y-1.5">
                 {renewalChecklist.map((item, index) => (
                   <li key={`${index}-${item}`} className="flex items-start gap-2">
@@ -83,20 +73,20 @@ export default async function MembershipPage() {
           <div className="mt-6 flex flex-wrap gap-4">
             <a href={entryEezeUrl} target="_blank" rel="noopener noreferrer"
               className="inline-block bg-brand-royal-blue text-white px-6 py-3 rounded-md font-semibold hover:bg-brand-sky-blue transition-colors">
-              Renew on EntryEeze
+              {pageCopy?.membershipRenewalButtonLabel || membershipPageDefaults.membershipRenewalButtonLabel}
             </a>
-            <Link href="/the-inside-edge-newsletter-archive"
+            <Link href={newsletterArchiveUrl}
               className="inline-block border-2 border-brand-royal-blue text-brand-royal-blue px-6 py-3 rounded-md font-semibold hover:bg-brand-royal-blue hover:text-white transition-colors">
-              Newsletter Archive
+              {pageCopy?.membershipNewsletterButtonLabel || membershipPageDefaults.membershipNewsletterButtonLabel}
             </Link>
           </div>
         </section>
 
         {/* Membership categories */}
         <section id="categories">
-          <h2 className="text-3xl font-bold text-brand-charcoal mb-2">{pageCopy?.membershipCategoriesTitle || settings.membershipCategoriesTitle || 'Membership Categories'}</h2>
+          <h2 className="text-3xl font-bold text-brand-charcoal mb-2">{pageCopy?.membershipCategoriesTitle || settings.membershipCategoriesTitle || membershipPageDefaults.membershipCategoriesTitle}</h2>
           <p className="text-gray-600 mb-8">
-            {pageCopy?.membershipCategoriesIntro || settings.membershipCategoriesIntro || 'All memberships run July 1 – June 30. Fees include US Figure Skating registration unless noted.'}
+            {pageCopy?.membershipCategoriesIntro || settings.membershipCategoriesIntro || membershipPageDefaults.membershipCategoriesIntro}
           </p>
 
           {categories.length > 0 ? (
@@ -134,7 +124,7 @@ export default async function MembershipPage() {
           )}
 
           <p className="text-sm text-gray-500 mt-4">
-            {pageCopy?.membershipTransferNotice || settings.membershipTransferNotice || 'Midterm Transfer: $75 first member, $65 each subsequent. Subsequent Introductory: $55.'}
+            {pageCopy?.membershipTransferNotice || settings.membershipTransferNotice || membershipPageDefaults.membershipTransferNotice}
           </p>
         </section>
 
@@ -154,11 +144,11 @@ export default async function MembershipPage() {
         </section>
 
         <section className="bg-brand-royal-blue text-white rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">{pageCopy?.membershipQuestionHeading || settings.membershipQuestionHeading || 'Questions about membership?'}</h2>
-          <p className="text-white/80 mb-6">{pageCopy?.membershipQuestionText || settings.membershipQuestionText || 'Contact our membership chair or use the form on our Contact page.'}</p>
-          <Link href="/contact"
+          <h2 className="text-2xl font-bold mb-3">{pageCopy?.membershipQuestionHeading || settings.membershipQuestionHeading || membershipPageDefaults.membershipQuestionHeading}</h2>
+          <p className="text-white/80 mb-6">{pageCopy?.membershipQuestionText || settings.membershipQuestionText || membershipPageDefaults.membershipQuestionText}</p>
+          <Link href={questionButtonUrl}
             className="inline-block bg-brand-golden-yellow text-brand-charcoal px-8 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
-            Contact Us
+            {pageCopy?.membershipQuestionButtonLabel || membershipPageDefaults.membershipQuestionButtonLabel}
           </Link>
         </section>
 
