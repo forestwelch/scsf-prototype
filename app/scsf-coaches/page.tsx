@@ -1,5 +1,6 @@
 import Container from '@/components/Container';
-import { getAllCoaches } from '@/lib/sanity.queries';
+import { getAllCoaches, getSitePage } from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'SCSF Coaches | Skating Club of San Francisco',
@@ -7,15 +8,15 @@ export const metadata = {
 };
 
 export default async function ScsfCoachesPage() {
-  const coaches = await getAllCoaches();
+  const [coaches, pageCopy] = await Promise.all([getAllCoaches(), getSitePage('/scsf-coaches')]);
 
   return (
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">SCSF Coaches</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'SCSF Coaches'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Current coach members of the Skating Club of San Francisco.
+            {pageCopy?.description || 'Current coach members of the Skating Club of San Francisco.'}
           </p>
         </Container>
       </div>
@@ -139,6 +140,7 @@ export default async function ScsfCoachesPage() {
         )}
 
       </Container>
+      <SitePageContent route="/scsf-coaches" />
     </div>
   );
 }

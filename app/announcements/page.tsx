@@ -1,6 +1,8 @@
 import Container from '@/components/Container';
-import { findEmbed, getAllAnnouncements, getSiteSettings } from '@/lib/sanity.queries';
+import { findEmbed, getAllAnnouncements, getSiteSettings, getSitePage } from '@/lib/sanity.queries';
 import AnnouncementsList from './AnnouncementsList';
+import SitePageHeader from '@/components/SitePageHeader';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Announcements | Skating Club of San Francisco',
@@ -8,51 +10,48 @@ export const metadata = {
 };
 
 export default async function AnnouncementsPage() {
-  const [announcements, settings] = await Promise.all([getAllAnnouncements(), getSiteSettings()]);
+  const [announcements, settings, pageCopy] = await Promise.all([getAllAnnouncements(), getSiteSettings(), getSitePage('/announcements')]);
   const newsletterSignup = findEmbed(settings, 'newsletter-signup');
-  const showNewsletter = settings.announcementsShowNewsletterSignup === true;
-  const showInstagram = settings.announcementsShowInstagram === true;
+  const newsletterUrl = pageCopy?.announcementsNewsletterUrl || newsletterSignup?.url;
+  const showNewsletter = pageCopy?.announcementsShowNewsletterSignup ?? (settings.announcementsShowNewsletterSignup === true);
+  const showInstagram = pageCopy?.announcementsShowInstagram ?? (settings.announcementsShowInstagram === true);
+  const instagramUrl = pageCopy?.announcementsInstagramUrl || settings.instagramUrl;
 
   return (
     <div className="min-h-screen bg-brand-off-white">
-      <div className="bg-brand-royal-blue text-white py-16">
-        <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{settings.announcementsPageTitle || 'Announcements'}</h1>
-          <p className="text-xl text-white/80 max-w-2xl">
-            {settings.announcementsPageIntro || 'Stay up to date with the latest news from the Skating Club of San Francisco.'}
-          </p>
+      <SitePageHeader route="/announcements" fallbackTitle={settings.announcementsPageTitle || 'Announcements'} fallbackDescription={settings.announcementsPageIntro || 'Stay up to date with the latest news from the Skating Club of San Francisco.'}>
           {announcements.length > 0 && (
             <p className="text-white/60 text-sm mt-3">{announcements.length} posts</p>
           )}
-        </Container>
-      </div>
+      </SitePageHeader>
 
       <Container className="py-12 md:py-16">
-        {(showNewsletter && newsletterSignup?.url || showInstagram && settings.instagramUrl) && (
+        {(showNewsletter && newsletterUrl || showInstagram && instagramUrl) && (
           <section className="mb-12 grid gap-6 md:grid-cols-2" aria-label="Follow club updates">
-            {showNewsletter && newsletterSignup?.url && (
+            {showNewsletter && newsletterUrl && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-bold text-brand-charcoal mb-3">Get club updates by email</h2>
                 <iframe
                   title={newsletterSignup.label || 'Newsletter signup'}
-                  src={newsletterSignup.url}
+                  src={newsletterUrl}
                   className="w-full border-0"
-                  height={newsletterSignup.height || 280}
+                  height={newsletterSignup?.height || 280}
                   loading="lazy"
                 />
               </div>
             )}
-            {showInstagram && settings.instagramUrl && (
+            {showInstagram && instagramUrl && (
               <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col justify-center">
-                <h2 className="text-xl font-bold text-brand-charcoal mb-3">Follow us on Instagram</h2>
-                <p className="text-gray-600 mb-5">See club photos, updates, and community news on Instagram.</p>
-                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-brand-bridge-orange font-semibold hover:underline">Visit SCSF on Instagram →</a>
+                <h2 className="text-xl font-bold text-brand-charcoal mb-3">{pageCopy?.announcementsInstagramHeading || 'Follow us on Instagram'}</h2>
+                <p className="text-gray-600 mb-5">{pageCopy?.announcementsInstagramIntro || 'See club photos, updates, and community news on Instagram.'}</p>
+                <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="text-brand-bridge-orange font-semibold hover:underline">Visit SCSF on Instagram →</a>
               </div>
             )}
           </section>
         )}
         <AnnouncementsList announcements={announcements} />
       </Container>
+      <SitePageContent route="/announcements" />
     </div>
   );
 }

@@ -13,10 +13,10 @@ and the **[FAQ](#faq)** below — you don't need to touch the code at all.
 
 ## What lives in Sanity vs. what lives in code
 
-Most reusable content records are edited in Sanity Studio. Some fixed-route
-pages and page layouts are still maintained in code. If the content you need
-to change has no corresponding Studio field, it currently requires a code
-change.
+Open Studio at `/studio`. Editors can also append `/studio` or `/edit` to a
+page URL (for example, `/about/studio`) to open that page's Sanity editor.
+Sanity still requires the editor to sign in and have permission to publish.
+Fixed page layouts and interactive features remain implemented in the app.
 
 ### Lives in Sanity (edit at `/studio`, no code, no deploy needed)
 
@@ -24,25 +24,28 @@ change.
 |---|---|
 | Site-wide settings: address, phone, website contact email, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Site Settings** → Organization & Contact / Social Media |
 | Google Analytics 4 tracking ID (optional) | **Site Settings** → Analytics (requires the club's `G-...` measurement ID) |
-| The navigation menu — order, labels, links, dropdowns, the Donate button | **Navigation** (pinned at top) |
-| Generic pages such as Ice Theatre and policy pages, including rich text, images, PDF uploads, and embeds | **Pages** or **Manage Content** |
+| The navigation menu — order, labels, links, dropdowns, the Donate button | Structure → **Navigation** |
+| Custom pages such as Ice Theatre and policy pages, including rich text, images, PDF uploads, and embeds | **Pages** → **Other pages** or **Manage Pages** |
 | News posts | **Announcements** |
 | Events (gala, competitions, test sessions) | **Events** |
-| Tests passed records, incl. Honors/Distinction | **Tests Passed** |
+| Tests passed records, incl. Honors/Distinction | **Manage Tests Passed** or **Tests Passed** in Structure |
 | Coaches directory | **Coaches** |
 | Board members | **Board Members** |
 | FAQs | **FAQs** |
 | Homepage hero slides | **Hero Slides** |
-| Membership page copy and membership category cards (names, prices, eligibility, features) | **Site Settings** → Membership Page Copy; **Membership Categories** |
-| Events page heading and intro | **Site Settings** → Events Page Copy |
-| Announcements heading and intro; optional newsletter signup and Instagram link | **Site Settings** → Announcements Page Copy; Zeffy and Social Media settings |
-| Photos above the Tests Passed records | **Site Settings** → Tests Passed Page Photos |
+| Built-in page headings and intros; additional rich text, images, PDFs, and embeds | **Pages** → **Website pages** → choose the page |
+| Membership renewal wording and related page copy | **Pages** → **Website pages** → **Membership**; category names and prices remain under **Membership Categories** |
+| Announcements newsletter/Instagram visibility and page-specific links | **Pages** → **Website pages** → **Announcements** |
+| Donation form embed URL | **Pages** → **Website pages** → **Donate** |
+| Tests Passed photos | **Pages** → **Website pages** → **Tests Passed** (legacy Site Settings photos are used if this list is empty) |
+| Site-wide address, contact information, links, embeds, analytics | **Site Settings** |
 
-Page layouts and fixed-route sections remain in code. The Membership page's
-listed copy, membership category records, Events and Announcements page
-headings/intro, footer website contact address, and Tests Passed photos have
-Sanity controls. A generic Pages document does not replace the layout or code
-for one of these fixed routes.
+Built-in pages are listed in Sanity so their headings, intros, and additional
+content are easy to find alongside page-specific collections. Each has a
+stable URL and cannot be deleted from the CMS; custom pages can be created and
+deleted. Route layouts, interactive features, and some section copy still
+require a code change. The generic rich-text area adds content to a built-in
+page; it does not replace its events, forms, or other functional sections.
 
 ### Lives in code (requires a developer + deploy)
 
@@ -62,7 +65,7 @@ already answered there.
 ## FAQ
 
 **Q: Where do I edit the navigation menu (add/remove/reorder items)?**
-Studio → **Navigation** (pinned at the top of the sidebar, above the divider).
+Studio → Structure → **Navigation**.
 It's one document with a list of menu items. Drag the handle on the left of
 each item to reorder. Click into an item to edit its label or link, or to
 add/remove dropdown sub-items. Changes go live as soon as you publish — no
@@ -70,7 +73,7 @@ code or deploy. The site may take up to about a minute to refresh published
 content.
 
 **Q: I created a new page. Why isn't it in the menu?**
-Create a page in Studio → **Manage Content** → **Add page**, then publish it.
+Create a page in Studio → **Manage Pages** → **Add page**, then publish it.
 Once published, it is available at `yoursite.com/its-slug` (the site may take
 up to about a minute to refresh). It does **not** automatically add itself to the nav menu.
 That's a deliberate two-step: not every page needs to be in the main menu
@@ -81,23 +84,31 @@ Choose a slug that does not conflict with an existing fixed route such as
 `/about` or `/membership`; those routes are implemented in code.
 
 **Q: How do I delete a page?**
-Studio → **Manage Content** → choose Pages → search for the page → Delete.
+Studio → **Manage Pages** → search for the custom page → Delete.
 Confirm the page title before deletion. This permanently removes the page and
 its draft; if it was linked in Navigation, remove that menu link too. Use the
-Edit action in Manage Content to open the page's full editor.
+Edit action to open the page's full editor. Built-in website pages cannot be
+deleted here because their URL and design are part of the site.
 
 **Q: How do I add or edit a page or a Tests Passed record?**
-Studio → **Manage Content** → choose Pages or Tests Passed. Use **Add page** or
-**Add test record** to open Sanity's full editor. Search for an existing item
-and choose **Edit** to update it. The spreadsheet importer remains available
-for adding a batch of Tests Passed records.
+Use **Manage Pages** for custom pages and **Manage Tests Passed** for test
+records. Both tools have their own search and create actions. Built-in page
+copy is under Structure → **Pages** → **Website pages**. The spreadsheet
+importer remains available for adding a batch of Tests Passed records.
+
+**Q: Can I open an editor from the page I'm looking at?**
+Yes. While signed in with Sanity access, add `/studio` or `/edit` to the end of
+the page URL, such as `/events/studio`. For event or announcement detail pages,
+the shortcut opens that record. `/studio` by itself opens the Studio home; use
+`/edit` for the website home page.
 
 **Q: Where's the Zeffy donation/newsletter embed link?**
-Studio → **Site Settings** → edit **Zeffy Donate Form Embed URL** or
-**Zeffy Newsletter Signup Embed URL**. Paste the `src` URL from Zeffy's embed
-code (not the full `<iframe>` HTML). These fixed fields supply the Donate and
-newsletter archive pages. For an embed inside another page, add an Embed
-block to that page's Content field instead.
+The Donate form URL is under Pages → Website pages → Donate. The Announcements
+newsletter signup and Instagram card are under Pages → Website pages →
+Announcements. The newsletter archive signup URL remains in Site Settings.
+Paste the `src` URL from Zeffy's embed code (not the full `<iframe>` HTML).
+For an embed inside another page, add an Embed block to that page's Content
+field instead.
 
 **Q: How do I add or edit images on a page?**
 Open the page in Studio and use the **Image** action in the Content editor
@@ -112,15 +123,16 @@ in an on-page viewer with a link to open it separately. Older WordPress PDF
 Embedder shortcodes are also rendered as PDF viewers for compatibility.
 
 **Q: Where do I update Membership or Events wording?**
-Open Studio → Site Settings and use the **Membership Page Copy** or **Events
-Page Copy** section. Empty optional fields keep the current site wording.
+Open Studio → Structure → **Pages** → **Website pages** and choose Membership,
+Events, or Announcements. Empty optional fields keep the current site wording.
 Membership category names, prices, eligibility, and benefits remain separate
 records under **Membership Categories**.
 
 **Q: How do I add the Tests Passed photos?**
-Open Studio → Site Settings → **Tests Passed Page Photos**. Add each photo,
-write its alt text, optionally add a caption, and publish Site Settings. Remove
-a photo from that list to hide it from the page.
+Open Studio → Structure → **Pages** → **Website pages** → **Tests Passed**.
+Add each photo, write its alt text, optionally add a caption, and publish the
+page. Existing Site Settings photos continue to display until the new page
+record has photos.
 
 **Q: How do I enable Google Analytics?**
 Ask the club's Google Analytics administrator for the GA4 Measurement ID
@@ -140,7 +152,7 @@ that the right document was published and ask a developer to inspect the
 deployment/cache.
 
 **Q: How does "With Honors" / "With Distinction" work on Tests Passed?**
-Each test record is available from Studio → **Manage Content** → Tests Passed
+Each test record is available from Studio → **Manage Tests Passed**
 and has a "Distinction" field: None,
 With Honors (`*`), or With Distinction (`**`). Set it per record. The
 `/tests-passed` page automatically shows the marker next to the test level and
@@ -296,13 +308,13 @@ scripts/                One-off migration/import scripts (WordPress → Sanity, 
 - **Site-wide old-vs-new content audit** — systematically compare every page
   against the old scsf.org to catch anything else missing beyond images
   (Ice Theatre was the first one found and fixed).
-- **No-code coverage outside the reported list** — About, Programs, Resources,
-  and some other fixed-page copy still lives in code. The controls above cover
-  the specific editor requests; completing the broader board goal means
-  moving the remaining fixed-page copy into Sanity as a separate project.
+- **Remaining fixed-page copy** — built-in page headings, intros, and added
+  rich-text content are in Sanity, but some fixed section copy in About,
+  Programs, Resources, and other routes remains in code. Converting those
+  bespoke sections to editable Sanity fields/blocks is still follow-up work.
 - **Update current season content** — Membership currently falls back to
   2025–26 wording. The board should enter the approved current-season dates and
-  renewal text in Site Settings → Membership Page Copy.
+  renewal text in Pages → Website pages → Membership.
 - **Optional integrations and content choices** — get the club's GA4
   measurement ID and confirm any privacy/consent requirements before turning
   tracking on; replace the current Instagram hashtag URL with the official

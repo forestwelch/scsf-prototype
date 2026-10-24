@@ -1,5 +1,6 @@
 import Container from '@/components/Container';
-import { getAllCoaches, getSiteSettings } from '@/lib/sanity.queries';
+import { getAllCoaches, getSiteSettings, getSitePage } from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 import Image from 'next/image';
 import { urlFor } from '@/lib/sanity.image';
 import Link from 'next/link';
@@ -10,7 +11,7 @@ export const metadata = {
 };
 
 export default async function ResourcesPage() {
-  const [coaches, settings] = await Promise.all([getAllCoaches(), getSiteSettings()]);
+  const [coaches, settings, pageCopy] = await Promise.all([getAllCoaches(), getSiteSettings(), getSitePage('/resources')]);
 
   const venue   = settings.venueName        ?? 'Yerba Buena Ice Skating & Bowling Center';
   const vStreet = settings.venueStreet      ?? '750 Folsom St.';
@@ -24,9 +25,9 @@ export default async function ResourcesPage() {
       {/* Page Header */}
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Club Resources</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'Club Resources'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Everything you need as an SCSF member — coaches, testing, ice time, competition info, and more.
+            {pageCopy?.description || 'Everything you need as an SCSF member — coaches, testing, ice time, competition info, and more.'}
           </p>
         </Container>
       </div>
@@ -336,6 +337,7 @@ export default async function ResourcesPage() {
         </section>
 
       </Container>
+      <SitePageContent route="/resources" />
     </div>
   );
 }

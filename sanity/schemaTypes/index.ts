@@ -10,6 +10,7 @@ import heroSlide from "./heroSlide";
 import faq from "./faq";
 import membershipCategory from "./membershipCategory";
 import embed from "./embedBlock";
+import sitePage from "./sitePage";
 
 export const schemaTypes = [
   // Singletons
@@ -30,4 +31,5 @@ export const schemaTypes = [
   coach,
   boardMember,
   page,
+  sitePage,
 ];

@@ -3,11 +3,20 @@ import type { Tool } from 'sanity'
 
 import ManageContentTool from './ManageContentTool'
 
-export function manageContentTool(): Tool {
+export function managePagesTool(): Tool {
   return {
-    name: 'manage-content',
-    title: 'Manage Content',
+    name: 'manage-pages',
+    title: 'Manage Pages',
     icon: EditIcon,
-    component: ManageContentTool,
+    component: () => <ManageContentTool docType="page" />,
+  }
+}
+
+export function manageTestsPassedTool(): Tool {
+  return {
+    name: 'manage-tests-passed',
+    title: 'Manage Tests Passed',
+    icon: EditIcon,
+    component: () => <ManageContentTool docType="testPassed" />,
   }
 }

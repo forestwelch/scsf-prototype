@@ -1,6 +1,7 @@
 import Container from '@/components/Container';
-import { getSiteSettings } from '@/lib/sanity.queries';
+import { getSiteSettings, getSitePage } from '@/lib/sanity.queries';
 import ContactForm from './ContactForm';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Contact Us | Skating Club of San Francisco',
@@ -8,7 +9,7 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const settings = await getSiteSettings();
+  const [settings, pageCopy] = await Promise.all([getSiteSettings(), getSitePage('/contact')]);
 
   const poBox    = settings.poBox            ?? 'P.O. Box 320457';
   const mailCity = settings.mailingCityStateZip ?? 'San Francisco, CA 94132';
@@ -23,9 +24,9 @@ export default async function ContactPage() {
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'Contact Us'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Have a question? Reach out to the SCSF board or find us at Yerba Buena.
+            {pageCopy?.description || 'Have a question? Reach out to the SCSF board or find us at Yerba Buena.'}
           </p>
         </Container>
       </div>
@@ -83,6 +84,7 @@ export default async function ContactPage() {
           </div>
         </div>
       </Container>
+      <SitePageContent route="/contact" />
     </div>
   );
 }

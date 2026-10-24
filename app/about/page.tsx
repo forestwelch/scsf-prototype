@@ -1,6 +1,8 @@
 import Container from '@/components/Container';
 import Link from 'next/link';
 import { getAllBoardMembers, getSiteSettings } from '@/lib/sanity.queries';
+import {getSitePage} from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'About Us | Skating Club of San Francisco',
@@ -8,9 +10,10 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const [board, settings] = await Promise.all([
+  const [board, settings, pageCopy] = await Promise.all([
     getAllBoardMembers(),
     getSiteSettings(),
+    getSitePage('/about'),
   ]);
 
   const poBox    = settings.poBox    ?? 'P.O. Box 320457';
@@ -24,9 +27,9 @@ export default async function AboutPage() {
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About SCSF</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'About SCSF'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            The Skating Club of San Francisco, Inc. — dedicated to the promotion of the sport of figure skating since 1932.
+            {pageCopy?.description || 'The Skating Club of San Francisco, Inc. — dedicated to the promotion of the sport of figure skating since 1932.'}
           </p>
           <nav className="flex flex-wrap gap-4 mt-6 text-sm">
             {[['Mission','mission'],['Members','members'],['Programs','programs'],['Club History','history'],['Board & Contacts','board']].map(([label, id]) => (
@@ -194,6 +197,7 @@ export default async function AboutPage() {
         </section>
 
       </Container>
+      <SitePageContent route="/about" />
     </div>
   );
 }

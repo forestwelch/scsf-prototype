@@ -3,6 +3,7 @@ import Container from '@/components/Container';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import EventCard from '@/components/EventCard';
 import HeroCarousel from '@/components/HeroCarousel';
+import SitePageContent from '@/components/SitePageContent';
 import { getLatestAnnouncements, getFeaturedEvents, getHeroSlides } from '@/lib/sanity.queries';
 
 export default async function Home() {
@@ -16,6 +17,8 @@ export default async function Home() {
     <div className="flex flex-col">
       {/* Hero Carousel */}
       <HeroCarousel slides={slides} />
+
+      <SitePageContent route="/" />
 
       {/* Latest Announcements Section */}
       <section className="py-16 md:py-24 bg-brand-off-white">

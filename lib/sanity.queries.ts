@@ -216,6 +216,39 @@ export interface Page {
   content?: any[];
 }
 
+export interface SitePage {
+  _id: string;
+  route: string;
+  title?: string;
+  description?: string;
+  content?: any[];
+  photos?: Array<{_key: string; alt?: string; caption?: string; asset?: {url?: string}}>;
+  membershipRenewalTitle?: string;
+  membershipRenewalParagraphs?: string[];
+  membershipRenewalChecklist?: string[];
+  membershipCategoriesTitle?: string;
+  membershipCategoriesIntro?: string;
+  membershipTransferNotice?: string;
+  membershipQuestionHeading?: string;
+  membershipQuestionText?: string;
+  membershipInfoSections?: Array<{_key: string; title: string; text?: string; linkLabel?: string; linkUrl?: string}>;
+  announcementsShowNewsletterSignup?: boolean;
+  announcementsNewsletterUrl?: string;
+  announcementsShowInstagram?: boolean;
+  announcementsInstagramUrl?: string;
+  announcementsInstagramHeading?: string;
+  announcementsInstagramIntro?: string;
+  donateFormUrl?: string;
+}
+
+/** Editable copy associated with a built-in route (page layout stays in the app). */
+export async function getSitePage(route: string): Promise<SitePage | null> {
+  return client.fetch<SitePage | null>(
+    `*[_type == "sitePage" && route == $route][0]{..., content[]{..., asset->{url}}, photos[]{_key, alt, caption, asset->{url}}}`,
+    {route},
+  );
+}
+
 // GROQ Queries
 
 /**

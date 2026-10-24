@@ -1,5 +1,6 @@
 import Container from '@/components/Container';
-import { getSiteSettings, findEmbed } from '@/lib/sanity.queries';
+import { getSiteSettings, findEmbed, getSitePage } from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Donate | Skating Club of San Francisco',
@@ -7,18 +8,17 @@ export const metadata = {
 };
 
 export default async function DonatePage() {
-  const settings = await getSiteSettings();
-  const donateUrl = findEmbed(settings, 'donate-form')?.url
+  const [settings, pageCopy] = await Promise.all([getSiteSettings(), getSitePage('/donate')]);
+  const donateUrl = (pageCopy?.donateFormUrl || findEmbed(settings, 'donate-form')?.url)
     ?? 'https://www.zeffy.com/embed/donation-form/donate-to-support-our-club-athletes';
 
   return (
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Support Our Skaters</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'Support Our Skaters'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Your donation goes directly to supporting SCSF athletes through programs,
-            competitions, and club initiatives.
+            {pageCopy?.description || 'Your donation goes directly to supporting SCSF athletes through programs, competitions, and club initiatives.'}
           </p>
         </Container>
       </div>
@@ -42,6 +42,7 @@ export default async function DonatePage() {
           />
         </div>
       </Container>
+      <SitePageContent route="/donate" />
     </div>
   );
 }

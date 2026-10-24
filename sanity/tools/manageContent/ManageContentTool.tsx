@@ -29,11 +29,25 @@ interface PageRow {
   _id: string
   title: string
   slug?: string
+  route?: string
+  isBuiltIn?: boolean
+  schemaType?: 'page' | 'sitePage'
 }
 
-const TYPE_OPTIONS: { value: DocType; title: string }[] = [
-  { value: 'testPassed', title: 'Tests Passed' },
-  { value: 'page', title: 'Pages' },
+const BUILT_IN_PAGES = [
+  {title: 'Home', route: '/', id: 'site-page-home'},
+  {title: 'About', route: '/about', id: 'site-page-about'},
+  {title: 'Membership', route: '/membership', id: 'site-page-membership'},
+  {title: 'Programs', route: '/programs', id: 'site-page-programs'},
+  {title: 'Events', route: '/events', id: 'site-page-events'},
+  {title: 'Resources', route: '/resources', id: 'site-page-resources'},
+  {title: 'Tests Passed', route: '/tests-passed', id: 'site-page-tests-passed'},
+  {title: 'Announcements', route: '/announcements', id: 'site-page-announcements'},
+  {title: 'FAQs', route: '/faqs', id: 'site-page-faqs'},
+  {title: 'Donate', route: '/donate', id: 'site-page-donate'},
+  {title: 'Contact', route: '/contact', id: 'site-page-contact'},
+  {title: 'SCSF Coaches', route: '/scsf-coaches', id: 'site-page-scsf-coaches'},
+  {title: 'Newsletter Archive', route: '/the-inside-edge-newsletter-archive', id: 'site-page-newsletter-archive'},
 ]
 
 const TEST_TYPE_LABELS: Record<string, string> = {
@@ -42,11 +56,11 @@ const TEST_TYPE_LABELS: Record<string, string> = {
   dance: 'Dance',
 }
 
-export default function ManageContentTool() {
+export default function ManageContentTool({docType}: {docType: DocType}) {
   const client = useClient({ apiVersion: '2026-01-14' }).withConfig({perspective: 'drafts'})
 
-  const [docType, setDocType] = useState<DocType>('testPassed')
   const [query, setQuery] = useState('')
+  const [testType, setTestType] = useState('')
   const [rows, setRows] = useState<(TestPassedRow | PageRow)[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,21 +76,34 @@ export default function ManageContentTool() {
       const q = `*${query.trim()}*`
       if (docType === 'testPassed') {
         const result = await client.fetch<TestPassedRow[]>(
-          `*[_type == "testPassed" && ($q == "**" || skaterName match $q || testLevel match $q)]
+          `*[_type == "testPassed" && ($q == "**" || skaterName match $q || testLevel match $q) && ($testType == "" || testType == $testType)]
             | order(uploadedAt desc)[0...50]{
             _id, skaterName, testType, testLevel, passedDate, distinction
           }`,
-          { q }
+          { q, testType }
         )
         if (requestId === searchRequestId.current) setRows(result)
       } else {
-        const result = await client.fetch<PageRow[]>(
+        const [customPages, builtInDocs] = await Promise.all([client.fetch<PageRow[]>(
           `*[_type == "page" && ($q == "**" || title match $q || slug.current match $q)]
             | order(title asc)[0...50]{
             _id, title, "slug": slug.current
           }`,
           { q }
-        )
+        ), client.fetch<PageRow[]>(`*[_type == "sitePage"]{_id, title, route}`)])
+        const builtInRows = BUILT_IN_PAGES
+          .map((page) => {
+            const existing = builtInDocs.find((doc) => doc._id.replace(/^drafts\./, '') === page.id)
+            return {
+              _id: existing?._id ?? page.id,
+              title: existing?.title || page.title,
+              route: page.route,
+              isBuiltIn: true,
+              schemaType: 'sitePage' as const,
+            }
+          })
+          .filter((page) => query.trim() === '' || `${page.title} ${page.route}`.toLowerCase().includes(query.trim().toLowerCase()))
+        const result = [...builtInRows, ...customPages.map((page) => ({...page, route: `/${page.slug ?? ''}`, schemaType: 'page' as const}))]
         if (requestId === searchRequestId.current) setRows(result)
       }
     } catch (err) {
@@ -86,14 +113,14 @@ export default function ManageContentTool() {
     } finally {
       if (requestId === searchRequestId.current) setLoading(false)
     }
-  }, [client, docType, query])
+  }, [client, docType, query, testType])
 
   useEffect(() => {
     // Search when the selected content type changes; the async result updates the view.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     runSearch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [docType])
+  }, [docType, testType])
 
   const handleDelete = useCallback(
     async (id: string, label: string) => {
@@ -127,39 +154,43 @@ export default function ManageContentTool() {
         <Stack space={5}>
           <Stack space={3}>
             <Text size={3} weight="bold">
-              Manage Content
+              {docType === 'page' ? 'Manage Pages' : 'Manage Tests Passed'}
             </Text>
             <Text size={1} muted>
-              Add and edit using Sanity&apos;s full document editor, or search here to find and remove
-              pages and Tests Passed records. This also works around the missing native Delete action.
+              {docType === 'page'
+                ? 'Find, create, edit, and remove website pages. Use the full document editor to update page content.'
+                : 'Find, create, edit, and remove Tests Passed records. Filter by discipline or search by skater and test level.'}
             </Text>
           </Stack>
 
           <Card padding={4} radius={2} shadow={1}>
             <Flex gap={3} align="flex-end" wrap="wrap">
-              <Box style={{ minWidth: 200 }}>
-                <Stack space={2}>
-                  <Text size={1} weight="semibold">Content type</Text>
-                  <Select
-                    value={docType}
-                    onChange={(e) => {
-                      searchRequestId.current += 1
-                      setRows([])
-                      setLoading(false)
-                      setDocType(e.currentTarget.value as DocType)
-                    }}
-                  >
-                    {TYPE_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.title}</option>
-                    ))}
-                  </Select>
-                </Stack>
-              </Box>
+              {docType === 'testPassed' && (
+                <Box style={{ minWidth: 180 }}>
+                  <Stack space={2}>
+                    <Text size={1} weight="semibold">Discipline</Text>
+                    <Select
+                      value={testType}
+                      onChange={(e) => {
+                        searchRequestId.current += 1
+                        setRows([])
+                        setLoading(false)
+                        setTestType(e.currentTarget.value)
+                      }}
+                    >
+                      <option value="">All disciplines</option>
+                      <option value="moves">Skating Skills</option>
+                      <option value="freeskate">Singles</option>
+                      <option value="dance">Dance</option>
+                    </Select>
+                  </Stack>
+                </Box>
+              )}
               <Box flex={1} style={{ minWidth: 200 }}>
                 <Stack space={2}>
                   <Text size={1} weight="semibold">Search</Text>
                   <TextInput
-                    placeholder={docType === 'testPassed' ? 'Skater name or test level…' : 'Title or slug…'}
+                    placeholder={docType === 'testPassed' ? 'Skater name or test level…' : 'Page title or URL…'}
                     value={query}
                     onChange={(e) => {
                       searchRequestId.current += 1
@@ -203,7 +234,7 @@ export default function ManageContentTool() {
                   ) : (
                     <>
                       <th style={headerCellStyle}>Title</th>
-                      <th style={headerCellStyle}>Slug</th>
+                      <th style={headerCellStyle}>Website URL</th>
                     </>
                   )}
                   <th style={headerCellStyle}></th>
@@ -232,14 +263,18 @@ export default function ManageContentTool() {
                     ) : (
                       <>
                         <td style={cellStyle}><Text size={1}>{(row as PageRow).title}</Text></td>
-                        <td style={cellStyle}><Text size={1} muted>/{(row as PageRow).slug}</Text></td>
+                        <td style={cellStyle}><Text size={1} muted>{(row as PageRow).route || `/${(row as PageRow).slug}`}</Text></td>
                       </>
                     )}
                     <td style={{ ...cellStyle, textAlign: 'right' }}>
-                      <EditButton docType={docType} id={row._id.replace(/^drafts\./, '')} />
+                      <EditButton
+                        docType={docType === 'page' ? ((row as PageRow).schemaType || 'page') : docType}
+                        id={row._id.replace(/^drafts\./, '')}
+                        isBuiltIn={docType === 'page' && Boolean((row as PageRow).isBuiltIn)}
+                      />
                     </td>
                     <td style={{ ...cellStyle, textAlign: 'right' }}>
-                      <Button
+                      {(row as PageRow).isBuiltIn ? <Text size={1} muted>Built-in page</Text> : <Button
                         text={deletingId === row._id.replace(/^drafts\./, '') ? 'Deleting…' : 'Delete'}
                         tone="critical"
                         mode="ghost"
@@ -253,7 +288,7 @@ export default function ManageContentTool() {
                               : (row as PageRow).title
                           )
                         }
-                      />
+                      />}
                     </td>
                   </tr>
                 ))}
@@ -278,8 +313,11 @@ function CreateButton({docType}: {docType: DocType}) {
   return <Button as="a" href={href} onClick={onClick} text={docType === 'page' ? 'Add page' : 'Add test record'} tone="positive" />
 }
 
-function EditButton({docType, id}: {docType: DocType; id: string}) {
+function EditButton({docType, id, isBuiltIn = false}: {docType: DocType | 'sitePage'; id: string; isBuiltIn?: boolean}) {
   const {href, onClick} = useIntentLink({intent: 'edit', params: {id, type: docType}})
+  if (isBuiltIn) {
+    return <Button as="a" href={`/studio/structure/pages;website-pages;${id}`} text="Edit" mode="ghost" fontSize={1} />
+  }
   return <Button as="a" href={href} onClick={onClick} text="Edit" mode="ghost" fontSize={1} />
 }
 

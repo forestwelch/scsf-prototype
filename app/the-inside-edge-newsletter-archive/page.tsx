@@ -1,5 +1,6 @@
 import Container from '@/components/Container';
-import { getSiteSettings, findEmbed } from '@/lib/sanity.queries';
+import { getSiteSettings, findEmbed, getSitePage } from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'The Inside Edge Quarterly Newsletter | Skating Club of San Francisco',
@@ -7,7 +8,7 @@ export const metadata = {
 };
 
 export default async function NewsletterArchivePage() {
-  const settings = await getSiteSettings();
+  const [settings, pageCopy] = await Promise.all([getSiteSettings(), getSitePage('/the-inside-edge-newsletter-archive')]);
 
   const newsletterSignupUrl = findEmbed(settings, 'newsletter-signup')?.url
     ?? 'https://www.zeffy.com/en-US/embed/newsletter-form/sign-up-for-updates-from-the-inside-edge';
@@ -21,9 +22,9 @@ export default async function NewsletterArchivePage() {
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">The Inside Edge</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'The Inside Edge'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            The quarterly newsletter of the Skating Club of San Francisco.
+            {pageCopy?.description || 'The quarterly newsletter of the Skating Club of San Francisco.'}
           </p>
         </Container>
       </div>
@@ -74,6 +75,7 @@ export default async function NewsletterArchivePage() {
 
         </div>
       </Container>
+      <SitePageContent route="/the-inside-edge-newsletter-archive" />
     </div>
   );
 }

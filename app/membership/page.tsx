@@ -1,6 +1,8 @@
 import Container from '@/components/Container';
 import Link from 'next/link';
-import { getAllMembershipCategories, getSiteSettings } from '@/lib/sanity.queries';
+import { getAllMembershipCategories, getSiteSettings, getSitePage } from '@/lib/sanity.queries';
+import SitePageHeader from '@/components/SitePageHeader';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Membership | Skating Club of San Francisco',
@@ -8,20 +10,25 @@ export const metadata = {
 };
 
 export default async function MembershipPage() {
-  const [categories, settings] = await Promise.all([
+  const [categories, settings, pageCopy] = await Promise.all([
     getAllMembershipCategories(),
     getSiteSettings(),
+    getSitePage('/membership'),
   ]);
 
   const entryEezeUrl = settings.entryEezeUrl
     ?? 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189';
-  const renewalParagraphs = settings.membershipRenewalParagraphs?.length
+  const renewalParagraphs = pageCopy?.membershipRenewalParagraphs?.length
+    ? pageCopy.membershipRenewalParagraphs
+    : settings.membershipRenewalParagraphs?.length
     ? settings.membershipRenewalParagraphs
     : [
       'Membership renewals are processed through EntryEeze. The 2025–26 season begins July 1, 2025. Renew before June 30 to maintain uninterrupted testing and competition eligibility — and to vote in the annual club election.',
       'New to USFS? Introductory members cannot sign up for tests or competitions until July 1. If you’re already a member, your current membership covers you for testing and competing straight through June 30.',
     ];
-  const renewalChecklist = settings.membershipRenewalChecklist?.length
+  const renewalChecklist = pageCopy?.membershipRenewalChecklist?.length
+    ? pageCopy.membershipRenewalChecklist
+    : settings.membershipRenewalChecklist?.length
     ? settings.membershipRenewalChecklist
     : [
       'Name spelling matches exactly on both EntryEeze and USFS Members Only',
@@ -29,7 +36,9 @@ export default async function MembershipPage() {
       'Your USFS number is entered in your EntryEeze account',
       "Parent members: you cannot be a parent member if your child's home club is elsewhere",
     ];
-  const infoSections = settings.membershipInfoSections?.length
+  const infoSections = pageCopy?.membershipInfoSections?.length
+    ? pageCopy.membershipInfoSections
+    : settings.membershipInfoSections?.length
     ? settings.membershipInfoSections
     : [
       { _key: 'volunteer', title: 'Volunteer Commitment', text: 'SCSF is entirely volunteer-run. All members are expected to contribute time to club activities — test sessions, competitions, the Annual Gala, and more.', linkLabel: 'Full policy →', linkUrl: '/volunteer-commitment' },
@@ -39,12 +48,7 @@ export default async function MembershipPage() {
 
   return (
     <div className="min-h-screen bg-brand-off-white">
-      <div className="bg-brand-royal-blue text-white py-16">
-        <Container>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{settings.membershipPageTitle || 'Membership'}</h1>
-          <p className="text-xl text-white/80 max-w-2xl">
-            {settings.membershipPageIntro || 'Join or renew your SCSF membership for the 2025–26 season (July 1, 2025 – June 30, 2026).'}
-          </p>
+      <SitePageHeader route="/membership" fallbackTitle={settings.membershipPageTitle || 'Membership'} fallbackDescription={settings.membershipPageIntro || 'Join or renew your SCSF membership for the 2025–26 season (July 1, 2025 – June 30, 2026).'}>
           <div className="flex flex-wrap gap-4 mt-6">
             <a href={entryEezeUrl} target="_blank" rel="noopener noreferrer"
               className="bg-brand-golden-yellow text-brand-charcoal px-6 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
@@ -55,14 +59,13 @@ export default async function MembershipPage() {
               View Membership Categories
             </a>
           </div>
-        </Container>
-      </div>
+      </SitePageHeader>
 
       <Container className="py-12 md:py-16 space-y-14">
 
         {/* Renewal notice */}
         <section id="join" className="bg-white rounded-lg shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">{settings.membershipRenewalTitle || 'Join or Renew for 2025–26'}</h2>
+          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">{pageCopy?.membershipRenewalTitle || settings.membershipRenewalTitle || 'Join or Renew for 2025–26'}</h2>
           <div className="text-gray-700 space-y-4">
             {renewalParagraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
             <div className="bg-brand-golden-yellow/10 border border-brand-golden-yellow/40 rounded-lg p-4">
@@ -91,9 +94,9 @@ export default async function MembershipPage() {
 
         {/* Membership categories */}
         <section id="categories">
-          <h2 className="text-3xl font-bold text-brand-charcoal mb-2">{settings.membershipCategoriesTitle || 'Membership Categories'}</h2>
+          <h2 className="text-3xl font-bold text-brand-charcoal mb-2">{pageCopy?.membershipCategoriesTitle || settings.membershipCategoriesTitle || 'Membership Categories'}</h2>
           <p className="text-gray-600 mb-8">
-            {settings.membershipCategoriesIntro || 'All memberships run July 1 – June 30. Fees include US Figure Skating registration unless noted.'}
+            {pageCopy?.membershipCategoriesIntro || settings.membershipCategoriesIntro || 'All memberships run July 1 – June 30. Fees include US Figure Skating registration unless noted.'}
           </p>
 
           {categories.length > 0 ? (
@@ -131,7 +134,7 @@ export default async function MembershipPage() {
           )}
 
           <p className="text-sm text-gray-500 mt-4">
-            {settings.membershipTransferNotice || 'Midterm Transfer: $75 first member, $65 each subsequent. Subsequent Introductory: $55.'}
+            {pageCopy?.membershipTransferNotice || settings.membershipTransferNotice || 'Midterm Transfer: $75 first member, $65 each subsequent. Subsequent Introductory: $55.'}
           </p>
         </section>
 
@@ -151,8 +154,8 @@ export default async function MembershipPage() {
         </section>
 
         <section className="bg-brand-royal-blue text-white rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">{settings.membershipQuestionHeading || 'Questions about membership?'}</h2>
-          <p className="text-white/80 mb-6">{settings.membershipQuestionText || 'Contact our membership chair or use the form on our Contact page.'}</p>
+          <h2 className="text-2xl font-bold mb-3">{pageCopy?.membershipQuestionHeading || settings.membershipQuestionHeading || 'Questions about membership?'}</h2>
+          <p className="text-white/80 mb-6">{pageCopy?.membershipQuestionText || settings.membershipQuestionText || 'Contact our membership chair or use the form on our Contact page.'}</p>
           <Link href="/contact"
             className="inline-block bg-brand-golden-yellow text-brand-charcoal px-8 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
             Contact Us
@@ -160,6 +163,7 @@ export default async function MembershipPage() {
         </section>
 
       </Container>
+      <SitePageContent route="/membership" />
     </div>
   );
 }

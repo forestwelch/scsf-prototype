@@ -1,6 +1,8 @@
 import Container from '@/components/Container';
 import EventCard from '@/components/EventCard';
 import { getAllEvents, getSiteSettings } from '@/lib/sanity.queries';
+import SitePageHeader from '@/components/SitePageHeader';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Events | Skating Club of San Francisco',
@@ -24,14 +26,7 @@ export default async function EventsPage() {
   return (
     <div className="min-h-screen bg-brand-off-white">
       {/* Page Header */}
-      <div className="bg-brand-royal-blue text-white py-16">
-        <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{settings.eventsPageTitle || 'Events'}</h1>
-          <p className="text-xl text-white/80 max-w-2xl">
-            {settings.eventsPageIntro || 'Galas, competitions, test sessions, and club events. Mark your calendars and join us on the ice.'}
-          </p>
-        </Container>
-      </div>
+      <SitePageHeader route="/events" fallbackTitle={settings.eventsPageTitle || 'Events'} fallbackDescription={settings.eventsPageIntro || 'Galas, competitions, test sessions, and club events. Mark your calendars and join us on the ice.'} />
 
       <Container className="py-12 md:py-16">
         {/* Upcoming Events */}
@@ -94,6 +89,7 @@ export default async function EventsPage() {
           </section>
         )}
       </Container>
+      <SitePageContent route="/events" />
     </div>
   );
 }

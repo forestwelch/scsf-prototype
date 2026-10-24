@@ -10,10 +10,10 @@ export default defineType({
   fieldsets: [
     {name: "organization", title: "Organization & Contact", options: {collapsible: true, collapsed: false}},
     {name: "social", title: "Social Media", options: {collapsible: true, collapsed: true}},
-    {name: "membershipPage", title: "Membership Page Copy", options: {collapsible: true, collapsed: true}},
-    {name: "eventsPage", title: "Events Page Copy", options: {collapsible: true, collapsed: true}},
-    {name: "announcementsPage", title: "Announcements Page Copy", options: {collapsible: true, collapsed: true}},
-    {name: "testsPassedPage", title: "Tests Passed Page Photos", options: {collapsible: true, collapsed: true}},
+    {name: "membershipPage", title: "Legacy Membership Page Copy (use Pages → Membership)", options: {collapsible: true, collapsed: true}},
+    {name: "eventsPage", title: "Legacy Events Page Copy (use Pages → Events)", options: {collapsible: true, collapsed: true}},
+    {name: "announcementsPage", title: "Legacy Announcements Page Copy (use Pages → Announcements)", options: {collapsible: true, collapsed: true}},
+    {name: "testsPassedPage", title: "Legacy Tests Passed Photos (use Pages → Tests Passed)", options: {collapsible: true, collapsed: true}},
     {name: "analytics", title: "Analytics", options: {collapsible: true, collapsed: true}},
   ],
   fields: [

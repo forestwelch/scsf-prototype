@@ -1,6 +1,8 @@
 import Container from '@/components/Container';
 import { getAllFaqs } from '@/lib/sanity.queries';
 import FAQList from './FAQList';
+import {getSitePage} from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Frequently Asked Questions | Skating Club of San Francisco',
@@ -8,15 +10,15 @@ export const metadata = {
 };
 
 export default async function FAQsPage() {
-  const faqs = await getAllFaqs();
+  const [faqs, pageCopy] = await Promise.all([getAllFaqs(), getSitePage('/faqs')]);
 
   return (
     <div className="min-h-screen bg-brand-off-white">
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'Frequently Asked Questions'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Quick answers to common questions about SCSF membership, testing, competitions, and more.
+            {pageCopy?.description || 'Quick answers to common questions about SCSF membership, testing, competitions, and more.'}
           </p>
         </Container>
       </div>
@@ -39,6 +41,7 @@ export default async function FAQsPage() {
           </a>
         </div>
       </Container>
+      <SitePageContent route="/faqs" />
     </div>
   );
 }

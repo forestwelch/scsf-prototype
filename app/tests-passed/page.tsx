@@ -1,5 +1,7 @@
 import Container from '@/components/Container';
-import { getAllTestsPassed, getTestsPassedPhotos } from '@/lib/sanity.queries';
+import { getAllTestsPassed, getTestsPassedPhotos, getSitePage } from '@/lib/sanity.queries';
+import SitePageHeader from '@/components/SitePageHeader';
+import SitePageContent from '@/components/SitePageContent';
 import TestsPassedClient from './TestsPassedClient';
 
 export const metadata = {
@@ -8,19 +10,13 @@ export const metadata = {
 };
 
 export default async function TestsPassedPage() {
-  const [tests, photos] = await Promise.all([getAllTestsPassed(), getTestsPassedPhotos()]);
+  const [tests, legacyPhotos, page] = await Promise.all([getAllTestsPassed(), getTestsPassedPhotos(), getSitePage('/tests-passed')]);
+  const photos = page ? page.photos ?? [] : legacyPhotos;
 
   return (
     <div className="min-h-screen bg-brand-off-white">
       {/* Page Header */}
-      <div className="bg-brand-royal-blue text-white py-16">
-        <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Tests Passed</h1>
-          <p className="text-xl text-white/80 max-w-2xl">
-            Congratulations to all SCSF members who have passed their US Figure Skating tests.
-          </p>
-        </Container>
-      </div>
+      <SitePageHeader route="/tests-passed" fallbackTitle="Tests Passed" fallbackDescription="Congratulations to all SCSF members who have passed their US Figure Skating tests." />
 
       {photos.length > 0 && (
         <Container className="pt-8">
@@ -35,6 +31,7 @@ export default async function TestsPassedPage() {
           </div>
         </Container>
       )}
+      <SitePageContent route="/tests-passed" />
 
       {tests.length === 0 ? (
         <Container className="py-12">

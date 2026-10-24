@@ -1,6 +1,7 @@
 import Container from '@/components/Container';
 import Link from 'next/link';
-import { getSiteSettings } from '@/lib/sanity.queries';
+import { getSiteSettings, getSitePage } from '@/lib/sanity.queries';
+import SitePageContent from '@/components/SitePageContent';
 
 export const metadata = {
   title: 'Programs | Skating Club of San Francisco',
@@ -8,7 +9,7 @@ export const metadata = {
 };
 
 export default async function ProgramsPage() {
-  const settings = await getSiteSettings();
+  const [settings, pageCopy] = await Promise.all([getSiteSettings(), getSitePage('/programs')]);
   const entryEezeUrl = settings.entryEezeUrl ?? 'http://comp.entryeeze.com/Membership/Welcome.aspx?cid=189';
   const emsUrl = settings.emsUrl ?? 'https://www.usfigureskating.org/ems';
   return (
@@ -16,9 +17,9 @@ export default async function ProgramsPage() {
       {/* Page Header */}
       <div className="bg-brand-royal-blue text-white py-16">
         <Container>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Programs</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageCopy?.title || 'Programs'}</h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            From performance teams to competitive testing, SCSF offers programs for skaters at every level.
+            {pageCopy?.description || 'From performance teams to competitive testing, SCSF offers programs for skaters at every level.'}
           </p>
         </Container>
       </div>
@@ -236,6 +237,7 @@ export default async function ProgramsPage() {
         </section>
 
       </Container>
+      <SitePageContent route="/programs" />
     </div>
   );
 }

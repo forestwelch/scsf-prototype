@@ -13,7 +13,7 @@ import { apiVersion, dataset, projectId } from "./sanity/env";
 import { schemaTypes } from "./sanity/schemaTypes";
 import { structure } from "./sanity/structure";
 import { importTestsPassedTool } from "./sanity/tools/importTestsPassed";
-import { manageContentTool } from "./sanity/tools/manageContent";
+import { managePagesTool, manageTestsPassedTool } from "./sanity/tools/manageContent";
 
 export default defineConfig({
   basePath: "/studio",
@@ -22,6 +22,15 @@ export default defineConfig({
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema: {
     types: schemaTypes,
+    templates: (prev) => [
+      ...prev,
+      {
+        id: 'sitePage',
+        title: 'Website page',
+        schemaType: 'sitePage',
+        value: (params: {route: string; title: string}) => ({route: params.route, title: params.title}),
+      },
+    ],
   },
   plugins: [
     structureTool({ structure }),
@@ -29,5 +38,5 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
   ],
-  tools: (prev) => [...prev, importTestsPassedTool(), manageContentTool()],
+  tools: (prev) => [...prev, importTestsPassedTool(), managePagesTool(), manageTestsPassedTool()],
 });
