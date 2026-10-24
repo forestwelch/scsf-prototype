@@ -49,6 +49,7 @@ const BUILT_IN_PAGES = [
   {title: 'SCSF Coaches', route: '/scsf-coaches', id: 'site-page-scsf-coaches'},
   {title: 'Newsletter Archive', route: '/the-inside-edge-newsletter-archive', id: 'site-page-newsletter-archive'},
 ]
+const RESERVED_SLUGS = BUILT_IN_PAGES.map(({route}) => route.replace(/^\//, '')).filter(Boolean)
 
 const TEST_TYPE_LABELS: Record<string, string> = {
   moves: 'Skating Skills',
@@ -85,11 +86,11 @@ export default function ManageContentTool({docType}: {docType: DocType}) {
         if (requestId === searchRequestId.current) setRows(result)
       } else {
         const [customPages, builtInDocs] = await Promise.all([client.fetch<PageRow[]>(
-          `*[_type == "page" && ($q == "**" || title match $q || slug.current match $q)]
+          `*[_type == "page" && !(slug.current in $reservedSlugs) && ($q == "**" || title match $q || slug.current match $q)]
             | order(title asc)[0...50]{
             _id, title, "slug": slug.current
           }`,
-          { q }
+          { q, reservedSlugs: RESERVED_SLUGS }
         ), client.fetch<PageRow[]>(`*[_type == "sitePage"]{_id, title, route}`)])
         const builtInRows = BUILT_IN_PAGES
           .map((page) => {
@@ -158,7 +159,7 @@ export default function ManageContentTool({docType}: {docType: DocType}) {
             </Text>
             <Text size={1} muted>
               {docType === 'page'
-                ? 'Find, create, edit, and remove website pages. Use the full document editor to update page content.'
+                ? 'Find, create, edit, and remove custom pages. Built-in pages are listed as protected entries; legacy duplicates of their URLs are hidden.'
                 : 'Find, create, edit, and remove Tests Passed records. Filter by discipline or search by skater and test level.'}
             </Text>
           </Stack>
