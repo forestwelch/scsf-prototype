@@ -31,7 +31,7 @@ export const structure: StructureResolver = (S) =>
                 S.document()
                   .schemaType('sitePage')
                   .documentId(page.id)
-                  .initialValueTemplate('sitePage', {route: page.route, title: page.title})
+                  .initialValueTemplate('sitePageWithRoute', {route: page.route, title: page.title})
                   .title(page.title)
               )
             ))

@@ -25,7 +25,7 @@ export default defineConfig({
     templates: (prev) => [
       ...prev,
       {
-        id: 'sitePage',
+        id: 'sitePageWithRoute',
         title: 'Website page',
         schemaType: 'sitePage',
         value: (params: {route: string; title: string}) => ({route: params.route, title: params.title}),
