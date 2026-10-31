@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "bun test",
+    "seed:site-pages": "bun scripts/seed-site-pages.ts"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.2",

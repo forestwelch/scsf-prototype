@@ -1,75 +1,69 @@
 # Backlog
 
-Running list of requested changes, in priority order. Update this file (don't
-just talk about changes in chat) so it stays the source of truth across
-sessions. Move items to **Done** with the date/commit when shipped; add new
-asks to **Open** as they come in, roughly ordered by priority.
+Running list of requested changes, in priority order. Update this file so it
+stays the source of truth across sessions. Move items to **Done** with the
+date/commit when shipped; add new asks to **Open** as they come in, roughly
+ordered by priority.
 
-Priority is judged by: data integrity issues first, then foundational
-schema/model changes (everything else depends on these), then UX/discoverability,
-then net-new features.
+Priority: data integrity first, then foundational schema/model changes, then
+editor workflow/discoverability, then net-new features.
 
 ## Open
 
-- **Sanity Studio's native Delete/Duplicate actions don't render for anyone.**
-  Confirmed on the account that owns the project (Administrator role) in both
-  Chrome and Zen, fullscreen, on both the Drafts and Published perspectives,
-  across every document type (Site Settings is *supposed* to lack Delete —
-  it's a locked singleton — but Announcements/Pages/Tests Passed should have
-  it and don't). Ruled out: schema-level `__experimental_actions` (only
-  `navigation`/`siteSettings` restrict anything), project member roles (all 3
-  human accounts are Administrators), browser rendering. Root cause still
-  unknown — worth a proper look (maybe file a Sanity support ticket, since
-  this smells like a Studio bug) but not worth blocking on. Landed the
-  "Delete Content" tool below as a working substitute in the meantime.
+- **P0 — Prepare a safe staging environment.** Confirm or create a non-
+  production Sanity dataset and connect a Vercel preview deployment to it.
+  The current local app points at `production`; do not run write-flow reviews
+  against it. Confirm the deployment branch and preview credentials.
+- **P0 — Initialize built-in page baselines in staging.** Review
+  `bun run seed:site-pages` against the staging dataset, then apply only after
+  confirming the missing-page list. The browser currently shows Events as
+  `Untitled` with Publish disabled because its fixed-route document has no
+  published baseline.
+- **P0 — Review current public content.** Membership still displays the
+  2025–26 season in October 2026; Events showed no upcoming schedule; Board
+  Members has no records. Ask the board to confirm dates, events, and the
+  approved board list before launch.
+- **P1 — Run human editor acceptance testing.** Have at least two nontechnical
+  board members complete the tasks in
+  [docs/HUMAN_REVIEW_CHECKLIST.md](docs/HUMAN_REVIEW_CHECKLIST.md) independently.
+  Log hesitation, help needed, completion time, and screenshots; fix blockers
+  and retest with someone else. Diane must not be the only tester or sign-off.
+- **P1 — Verify publish and delete behavior end to end.** On staging, test
+  first publish, edit/undo against a published document, custom page duplicate
+  and delete, and a page that has a draft or release version. Use only `QA TEST
+  ONLY` records and remove those records at the end.
+- **P1 — Preview/apply the built-in page baseline seed.** Run
+  `bun run seed:site-pages` against the intended dataset and review the list.
+  Use `--apply` only after confirming it creates the expected published
+  baselines and preserves existing drafts.
+- **P2 — Make remaining page sections editable.** After editor testing, define
+  the reusable content sections needed for Membership, Events, Announcements,
+  and the PDF/calendar page. Avoid building a broad page builder until the
+  tested workflows show it is necessary. See
+  [the editor problem log](docs/EDITOR_PROBLEMS_README.md#problem-3--editing-is-harder-than-wordpress-and-content-lives-in-surprising-places).
+- **P2 — Assign ongoing ownership and the go/no-go date.** Name an editor lead,
+  code maintainer, and backup; agree how code/content changes are reviewed,
+  published, rolled back, and supported if Forest is unavailable.
 
 ## Done
 
-- **2026-10-23** — Browser-tested Pages and Tests Passed create, edit, publish,
-  and delete flows against a disposable Sanity dataset, including deletion of a
-  record with an unpublished draft. Tested spreadsheet parsing, row exclusion,
-  distinctions, date selection, import, and repeat-import deduplication. Removed
-  all synthetic documents afterward.
-- **2026-10-23** — Added a Manage Content Studio tool for Pages and Tests Passed:
-  create and edit links open the full Sanity document editor; search includes
-  drafts; deletion removes published and draft documents after confirmation.
-  Updated editor documentation to point to the working workflow.
-- **2026-10-23** — Audited README instructions against the signed-in Studio and
-  local site. Exposed the already-stored Zeffy URLs in the Site Settings schema
-  and kept Donate/newsletter pages reading those values. Corrected stale setup,
-  content ownership, import, and refresh-timing guidance.
-
-- **2026-09-14** — Tests Passed cleanup batch:
-  1. Deleted 46 duplicate `2026-06-30` testPassed records (exact dupes of the
-     `2026-06-01` batch) + 1 stray unpublished draft, from production.
-  2. Consolidated Test Type to 3 categories: `moves` → "Skating Skills",
-     `freeskate` → "Singles", `dance` → "Dance" (was mislabeled "Ice Dance" on
-     the frontend). Removed the unused "Pairs" option (no data ever used it).
-  3. Changed `passedDate` from a full date to month/year only (`YYYY-MM`,
-     string field with regex validation). Migrated all 1636 existing records.
-     Import tool now uses a native `<input type="month">` picker.
-  4. Added `uploadedAt` (readOnly, autofilled datetime) to `testPassed`,
-     separate from `passedDate` — tracks when a record was imported, not when
-     the test was passed. Backfilled from `_createdAt` on existing records.
-  5. Added a Studio structure view (Content → Tests Passed) with an
-     "All (recently uploaded first)" list plus per-type sub-lists, so past
-     imports and individual records are easy to find/edit.
-  6. Added a Type tab row to `/tests-passed` (alongside the existing Year
-     tabs) so visitors can filter to one discipline.
-  7. Sanity Studio's built-in Delete action turned out to be broken/missing
-     for every document type, for reasons we couldn't root-cause (see Open).
-     Added a "Delete Content" Studio tool (search + delete for Tests Passed
-     and Pages) as a working substitute — see "Where things live" below.
-
-## Where things live in Studio
-
-- **Add, edit, or delete a Tests Passed record or a Page**: top nav →
-  **Manage Content**. Pick the content type. Add and Edit open the full Sanity
-  document editor; search and Delete find/remove records here because Studio's
-  native Delete action isn't rendering for anyone on this project — see the
-  Open item above.
-- **Edit a single document**: open it from the sidebar and edit fields
-  directly — that part works. It's specifically the Delete/Duplicate actions
-  (and the whole action footer they'd normally live in) that don't render.
-- **Past Tests Passed imports**: Studio sidebar → Content → Tests Passed →
-  "All (recently uploaded first)" — sorted by `uploadedAt` descending.
+- **2026-10-31 — Studio controls visibility and editor navigation.** Removed
+  public site chrome from Studio, flattened the built-in Pages list, grouped
+  People and Website settings, moved spreadsheet import into Tests Passed,
+  and removed developer/redundant top-level tabs. Publish now disables when
+  draft content matches published content. Added unit tests and browser-checked
+  the new Pages and Tests Passed navigation locally. Detailed findings are in
+  [docs/EDITOR_PROBLEMS_README.md](docs/EDITOR_PROBLEMS_README.md).
+- **2026-10-23 — Disposable-dataset workflow validation.** Browser-tested
+  Pages and Tests Passed create, edit, publish, and delete flows against a
+  disposable Sanity dataset, including a record with an unpublished draft.
+  Tested spreadsheet parsing, row exclusion, distinctions, date selection,
+  import, and repeat-import deduplication. Removed synthetic documents.
+- **2026-10-23 — Manage Pages and Manage Tests Passed tools.** Added page and
+  test-record create/edit/delete workflows, with search and full-editor links.
+- **2026-10-23 — README audit and content settings.** Exposed existing Zeffy
+  URLs in Site Settings, corrected setup/content/import guidance, and documented
+  refresh timing.
+- **2026-09-14 — Tests Passed cleanup.** Removed duplicate 2026-06-30 records;
+  consolidated test categories and month/year passed dates; added upload
+  timestamps, type filters, and a Studio view sorted by recent import.

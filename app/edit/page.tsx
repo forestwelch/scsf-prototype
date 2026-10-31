@@ -23,12 +23,12 @@ export default async function EditPageShortcut({searchParams}: {searchParams: Pr
   const path = `/${rawPath.split('/').filter(Boolean).join('/')}`
   const route = path === '/' ? '/' : path.replace(/\/$/, '')
 
-  if (route.length > 180 || route.includes('..')) redirect('/studio/manage-pages')
+  if (route.length > 180 || route.includes('..')) redirect('/studio/structure/pages')
 
   const builtInId = builtInPages[route]
   if (builtInId) {
     const exists = await client.fetch<boolean>(`defined(*[_type == "sitePage" && _id == $id][0]._id)`, {id: builtInId})
-    if (!exists) redirect(`/studio/structure/pages;website-pages;${builtInId}`)
+    if (!exists) redirect(`/studio/structure/pages;${builtInId}`)
     redirect(`/studio/intent/edit/id=${builtInId};type=sitePage`)
   }
 
@@ -49,5 +49,5 @@ export default async function EditPageShortcut({searchParams}: {searchParams: Pr
     if (page?._id) redirect(`/studio/intent/edit/id=${page._id};type=page`)
   }
 
-  redirect('/studio/manage-pages')
+  redirect('/studio/structure/pages;other-pages')
 }

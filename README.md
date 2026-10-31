@@ -14,7 +14,9 @@ and the **[FAQ](#faq)** below — you don't need to touch the code at all.
 ## What lives in Sanity vs. what lives in code
 
 Open Studio at `/studio`. Editors can also append `/studio` to a page URL (for
-example, `/about/studio`) to open that page's Sanity editor.
+example, `/about/studio`) to open Studio for that page's Sanity document when
+the route is linked to a document. Studio opens as a full-screen editor without
+the public site header/footer covering its controls.
 Sanity still requires the editor to sign in and have permission to publish.
 Fixed page layouts and interactive features remain implemented in the app.
 
@@ -22,30 +24,31 @@ Fixed page layouts and interactive features remain implemented in the app.
 
 | What | Where in Studio |
 |---|---|
-| Site-wide settings: address, phone, website contact email, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Site Settings** → Organization & Contact / Social Media |
-| Google Analytics 4 tracking ID (optional) | **Site Settings** → Analytics (requires the club's `G-...` measurement ID) |
-| The navigation menu — order, labels, links, dropdowns, the Donate button | Structure → **Navigation** |
-| Custom pages such as Ice Theatre and policy pages, including rich text, images, PDF uploads, and embeds | **Pages** → **Other pages** or **Manage Pages** |
+| Site-wide settings: address, phone, website contact email, social links, **Zeffy donation/newsletter embed URLs**, EntryEeze/EMS links | **Website settings** → **Contact, social links & analytics** |
+| Google Analytics 4 tracking ID (optional) | **Website settings** → **Contact, social links & analytics** (requires the club's `G-...` measurement ID) |
+| The navigation menu — order, labels, links, dropdowns, the Donate button | **Website settings** → **Navigation menu** |
+| Custom pages such as Ice Theatre and policy pages, including rich text, images, PDF uploads, and embeds | **Pages** → **Custom pages** |
 | News posts | **Announcements** |
 | Events (gala, competitions, test sessions) | **Events** |
-| Tests passed records, incl. Honors/Distinction | **Manage Tests Passed** or **Tests Passed** in Structure |
-| Coaches directory | **Coaches** |
-| Board members | **Board Members** |
+| Tests passed records, incl. Honors/Distinction | **Tests Passed** → **All test records** |
+| Coaches directory | **People** → **Coaches** |
+| Board members | **People** → **Board members** |
 | FAQs | **FAQs** |
-| Homepage hero slides | **Hero Slides** |
-| Built-in page headings and intros; additional rich text, images, PDFs, and embeds | **Pages** → **Website pages** → choose the page |
-| Membership renewal wording and related page copy | **Pages** → **Website pages** → **Membership**; category names and prices remain under **Membership Categories** |
-| Announcements newsletter/Instagram visibility and page-specific links | **Pages** → **Website pages** → **Announcements** |
-| Donation form embed URL | **Pages** → **Website pages** → **Donate** |
-| Tests Passed photos | **Pages** → **Website pages** → **Tests Passed** (legacy Site Settings photos are used if this list is empty) |
-| Site-wide address, contact information, links, embeds, analytics | **Site Settings** |
+| Homepage hero slides | **Home page slides** |
+| Built-in page headings and intros; additional rich text, images, PDFs, and embeds | **Pages** → choose a page |
+| Membership renewal wording and related page copy | **Pages** → **Membership**; category names and prices are under **Membership categories & fees** |
+| Announcements newsletter/Instagram visibility and page-specific links | **Pages** → **Announcements** |
+| Donation form embed URL | **Pages** → **Donate** |
+| Tests Passed photos | **Pages** → **Tests Passed** (legacy Site Settings photos are used if this list is empty) |
+| Site-wide address, contact information, links, embeds, analytics | **Website settings** → **Contact, social links & analytics** |
 
-Built-in pages are listed in Sanity so their headings, intros, and additional
-content are easy to find alongside page-specific collections. Each has a
-stable URL and cannot be deleted from the CMS; custom pages can be created and
-deleted. Route layouts, interactive features, and some section copy still
-require a code change. The generic rich-text area adds content to a built-in
-page; it does not replace its events, forms, or other functional sections.
+Built-in pages are listed directly under **Pages**; custom pages are in that
+same list under **Custom pages**. Built-in URLs and layouts are fixed parts of
+the site and cannot be deleted as ordinary content. Custom pages can be
+created, duplicated, and deleted. Route layouts, interactive features, and
+some section copy still require a code change. The generic rich-text area adds
+content to a built-in page; it does not replace its events, forms, or other
+functional sections.
 
 ### Lives in code (requires a developer + deploy)
 
@@ -65,7 +68,7 @@ already answered there.
 ## FAQ
 
 **Q: Where do I edit the navigation menu (add/remove/reorder items)?**
-Studio → Structure → **Navigation**.
+Studio → **Website settings** → **Navigation menu**.
 It's one document with a list of menu items. Drag the handle on the left of
 each item to reorder. Click into an item to edit its label or link, or to
 add/remove dropdown sub-items. Changes go live as soon as you publish — no
@@ -73,28 +76,29 @@ code or deploy. The site may take up to about a minute to refresh published
 content.
 
 **Q: I created a new page. Why isn't it in the menu?**
-Create a page in Studio → **Manage Pages** → **Add page**, then publish it.
+Create a page in Studio → **Pages** → **Custom pages** → **Add**, then publish it.
 Once published, it is available at `yoursite.com/its-slug` (the site may take
 up to about a minute to refresh). It does **not** automatically add itself to the nav menu.
 That's a deliberate two-step: not every page needs to be in the main menu
 (e.g. a page only linked from another page). To add it to the menu, go to
-Studio → **Navigation** → add a new item → set its link type to "Sanity Page"
+Studio → **Website settings** → **Navigation menu** → add a new item → set its link type to "Sanity Page"
 → pick your page from the list.
 Choose a slug that does not conflict with an existing fixed route such as
 `/about` or `/membership`; those routes are implemented in code.
 
-**Q: How do I delete a page?**
-Studio → **Manage Pages** → search for the custom page → Delete.
-Confirm the page title before deletion. This permanently removes the page and
-its draft; if it was linked in Navigation, remove that menu link too. Use the
-Edit action to open the page's full editor. Built-in website pages cannot be
-deleted here because their URL and design are part of the site.
+**Q: How do I delete or duplicate a page?**
+Open Studio → **Pages** → **Custom pages**, select the page, then open the
+document actions menu (three dots) in the editor. Choose Delete or Duplicate.
+Confirm the page name before deleting; remove its Navigation link separately
+if it is linked there. Built-in pages such as About and Membership are fixed
+website routes, so they are protected from deletion and duplication as ordinary
+content pages.
 
 **Q: How do I add or edit a page or a Tests Passed record?**
-Use **Manage Pages** for custom pages and **Manage Tests Passed** for test
-records. Both tools have their own search and create actions. Built-in page
-copy is under Structure → **Pages** → **Website pages**. The spreadsheet
-importer remains available for adding a batch of Tests Passed records.
+Use **Pages** for built-in page copy and custom pages. The built-in pages are
+listed directly; choose **Custom pages** for WordPress/imported and new pages.
+Use **Tests Passed** → **All test records** for individual results, or choose a
+discipline. **Upload a spreadsheet** is in the same Tests Passed menu.
 
 **Q: Can I open an editor from the page I'm looking at?**
 Yes. While signed in with Sanity access, add `/studio` to the end of the page
@@ -102,9 +106,9 @@ URL, such as `/events/studio`. For event or announcement detail pages, the
 shortcut opens that record. `/studio` by itself opens the Studio home.
 
 **Q: Where's the Zeffy donation/newsletter embed link?**
-The Donate form URL is under Pages → Website pages → Donate. The Announcements
-newsletter signup and Instagram card are under Pages → Website pages →
-Announcements. The newsletter archive signup URL remains in Site Settings.
+The Donate form URL is under Pages → Donate. The Announcements
+newsletter signup and Instagram card are under Pages →
+Announcements. The newsletter archive signup URL remains under Website settings.
 Paste the `src` URL from Zeffy's embed code (not the full `<iframe>` HTML).
 For an embed inside another page, add an Embed block to that page's Content
 field instead.
@@ -122,36 +126,42 @@ in an on-page viewer with a link to open it separately. Older WordPress PDF
 Embedder shortcodes are also rendered as PDF viewers for compatibility.
 
 **Q: Where do I update Membership or Events wording?**
-Open Studio → Structure → **Pages** → **Website pages** and choose Membership,
+Open Studio → **Pages** and choose Membership,
 Events, or Announcements. Empty optional fields keep the current site wording.
 Membership category names, prices, eligibility, and benefits remain separate
-records under **Membership Categories**.
+records under **Membership categories & fees**.
 
 **Q: How do I add the Tests Passed photos?**
-Open Studio → Structure → **Pages** → **Website pages** → **Tests Passed**.
+Open Studio → **Pages** → **Tests Passed**.
 Add each photo, write its alt text, optionally add a caption, and publish the
 page. Existing Site Settings photos continue to display until the new page
 record has photos.
 
 **Q: How do I enable Google Analytics?**
 Ask the club's Google Analytics administrator for the GA4 Measurement ID
-(format `G-XXXXXXXXXX`), then enter it in Studio → Site Settings → **Analytics**
+(format `G-XXXXXXXXXX`), then enter it in Studio → **Website settings** →
+**Contact, social links & analytics**
 and publish. Tracking remains off while that field is blank.
 
 **Q: Where is the website contact email?**
-Studio → Site Settings → **Organization & Contact** → Website Contact Email.
+Studio → **Website settings** → **Contact, social links & analytics** → Website Contact Email.
 The footer uses `webmaster@scsf.org` unless another address is entered.
 
 **Q: Where is Publish, and when should changes show up?**
-In Sanity's document editor, Publish is in the document toolbar at the top
-right; it becomes available when there are draft changes to publish. Publishing
-does not require a code deploy. Pages that use Sanity content refresh in the
-background about once a minute. If a change is still missing after that, check
-that the right document was published and ask a developer to inspect the
-deployment/cache.
+In Studio's document editor, look in the pinned action bar at the bottom of the
+editor. Publish is enabled only when the draft differs from the published
+content; editing and then undoing back to the published content should leave it
+disabled. Studio is
+full-screen so the public site header and footer do not cover this bar. If
+you're editing a release, publish the release from the release controls. A
+validation error or insufficient Sanity permissions can also prevent
+publishing. Publishing content does not require a code deploy. Pages that use
+Sanity content refresh in the background about once a minute. If the published
+change is still missing after that, check that the correct document or release
+was published, then ask a developer to inspect the deployment/cache.
 
 **Q: How does "With Honors" / "With Distinction" work on Tests Passed?**
-Each test record is available from Studio → **Manage Tests Passed**
+Each test record is available from Studio → **Tests Passed** → **All test records**
 and has a "Distinction" field: None,
 With Honors (`*`), or With Distinction (`**`). Set it per record. The
 `/tests-passed` page automatically shows the marker next to the test level and
@@ -204,7 +214,7 @@ Create `.env.local` in the project root with:
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID=xi18pbe1
 NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_TOKEN=<your Sanity API token, Editor role; only for migration scripts>
+SANITY_TOKEN=<your Sanity API token, Editor role; used by migration and seed scripts>
 
 # Only needed by selected migration scripts
 WP_USERNAME=<only if you need to pull unpublished/archived WP content>
@@ -233,8 +243,16 @@ Sanity account; the API token above is for scripts, not browser sign-in.
 ```bash
 bun run build   # production build — catches type errors, run before pushing
 bun run lint    # eslint
+bun test        # unit tests for Studio routing and publish change detection
+bun run seed:site-pages        # preview which built-in published baselines are missing (SANITY_TOKEN required)
+bun run seed:site-pages -- --apply  # create missing baselines only
 bun run start   # serve the production build locally
 ```
+
+For the issue-by-issue history, causes, fixes, and validation notes, see
+[docs/EDITOR_PROBLEMS_README.md](docs/EDITOR_PROBLEMS_README.md).
+For a safe, task-based board member review with pass criteria, see
+[docs/HUMAN_REVIEW_CHECKLIST.md](docs/HUMAN_REVIEW_CHECKLIST.md).
 
 ---
 
@@ -300,20 +318,28 @@ scripts/                One-off migration/import scripts (WordPress → Sanity, 
 
 ---
 
-## Open items (as of this writing)
+## Open items (reviewed 2026-10-31)
 
 - **Confirm Vercel deployment settings** — the repository does not define the
   external Vercel project or its production branch settings.
 - **Site-wide old-vs-new content audit** — systematically compare every page
   against the old scsf.org to catch anything else missing beyond images
   (Ice Theatre was the first one found and fixed).
-- **Remaining fixed-page copy** — built-in page headings, intros, and added
+- **Editor experience remains partly structured** — built-in page headings, intros, and added
   rich-text content are in Sanity, but some fixed section copy in About,
   Programs, Resources, and other routes remains in code. Converting those
   bespoke sections to editable Sanity fields/blocks is still follow-up work.
+  The current system is not a free-form visual website builder; new page
+  layouts and functional sections still need code/schema work.
 - **Update current season content** — Membership currently falls back to
   2025–26 wording. The board should enter the approved current-season dates and
-  renewal text in Pages → Website pages → Membership.
+  renewal text in Pages → Membership.
+- **Confirm public-facing data** — Events currently reports no upcoming
+  schedule, and the Board Members collection is empty in the selected dataset.
+  Confirm whether that is intentional and add approved content where needed.
+- **Test editor workflows with nontechnical editors** — use the task-based
+  [human review checklist](docs/HUMAN_REVIEW_CHECKLIST.md) in a staging dataset
+  before treating the new editor as easier to maintain than WordPress.
 - **Optional integrations and content choices** — get the club's GA4
   measurement ID and confirm any privacy/consent requirements before turning
   tracking on; replace the current Instagram hashtag URL with the official

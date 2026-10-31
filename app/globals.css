@@ -29,3 +29,19 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
+
+html:has(.sanity-studio-shell),
+body:has(.sanity-studio-shell) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.sanity-studio-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  width: 100vw;
+  height: 100dvh;
+  overflow: auto;
+  background: #fff;
+}

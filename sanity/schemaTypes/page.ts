@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "page",
-  title: "Pages",
+  title: "Custom page",
   type: "document",
   fields: [
     // Kept hidden for compatibility with the legacy WordPress import. Navigation

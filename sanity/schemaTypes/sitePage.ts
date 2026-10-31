@@ -1,12 +1,32 @@
 import {defineField, defineType} from 'sanity'
 
 /** Editable copy for a built-in route whose layout or data is implemented in the app. */
+const routeTitles: Record<string, string> = {
+  '/': 'Home',
+  '/about': 'About',
+  '/membership': 'Membership',
+  '/programs': 'Programs',
+  '/events': 'Events',
+  '/resources': 'Resources',
+  '/tests-passed': 'Tests Passed',
+  '/announcements': 'Announcements',
+  '/faqs': 'FAQs',
+  '/donate': 'Donate',
+  '/contact': 'Contact',
+  '/scsf-coaches': 'SCSF Coaches',
+  '/the-inside-edge-newsletter-archive': 'Newsletter Archive',
+}
+
 export default defineType({
   name: 'sitePage',
-  title: 'Website Page',
+  title: 'Built-in website page',
+  description: 'Content settings for a fixed website route. For pages with their own URL, use Pages → Custom pages.',
   type: 'document',
   fields: [
-    defineField({name: 'route', title: 'Website URL', type: 'string', readOnly: true}),
+    defineField({
+      name: 'route', title: 'Website URL', type: 'string', readOnly: true,
+      description: 'This is a built-in site route. It cannot be deleted or duplicated as a regular content page.',
+    }),
     defineField({name: 'title', title: 'Page heading', type: 'string', validation: (Rule) => Rule.required()}),
     defineField({name: 'description', title: 'Short description', type: 'text', rows: 3, description: 'Shown below the page heading when the design has an intro area.'}),
     defineField({name: 'membershipRenewalTitle', title: 'Renewal section heading', type: 'string', hidden: ({document}) => document?.route !== '/membership'}),
@@ -66,5 +86,11 @@ export default defineType({
       ],
     }),
   ],
-  preview: {select: {title: 'title', route: 'route'}, prepare: ({title, route}) => ({title, subtitle: route})},
+  preview: {
+    select: {title: 'title', route: 'route'},
+    prepare: ({title, route}) => ({
+      title: title || (route ? routeTitles[route] : undefined) || 'Built-in website page',
+      subtitle: route,
+    }),
+  },
 })
